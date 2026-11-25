@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Janoo | Pakistan's Modern Govt & Private Jobs Portal</title>
+    <!-- Browser Tab Icon (Favicon) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%232563eb'/%3E%3Cstop offset='100%25' stop-color='%234338ca'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Cpath fill='%23ffffff' d='M24 18a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v4h6a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H18a4 4 0 0 1-4-4V26a4 4 0 0 1 4-4h6v-4zm4 0v4h8v-4h-8zm-10 14v3h10v-2a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2h10v-3H18z'/%3E%3C/svg%3E">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -39,6 +41,11 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.22s ease-out;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
         }
     </style>
 </head>
@@ -161,7 +168,7 @@
                 </div>
                 <div class="flex items-center gap-2 px-2 text-xs sm:text-sm font-semibold text-slate-500">
                     <span class="w-2 h-2 rounded-full bg-blue-600"></span>
-                    <span id="count">0 job posts available</span>
+                    <span id="count">Loading jobs...</span>
                 </div>
             </div>
 
@@ -173,8 +180,23 @@
                 </div>
             </div>
 
+            <!-- Circular Percentage Loader (Shown while jobs are loading) -->
+            <div id="jobsCircularLoader" class="bg-white border border-slate-200/90 rounded-3xl p-12 sm:p-16 flex flex-col items-center justify-center text-center shadow-xs">
+                <div class="relative w-28 h-28 flex items-center justify-center">
+                    <svg class="w-28 h-28" viewBox="0 0 112 112">
+                        <circle class="text-slate-100" stroke-width="9" stroke="currentColor" fill="transparent" r="46" cx="56" cy="56" />
+                        <circle id="homeLoaderCircle" class="progress-ring-circle text-blue-600" stroke-width="9" stroke-linecap="round" stroke="currentColor" fill="transparent" r="46" cx="56" cy="56" stroke-dasharray="289.03" stroke-dashoffset="289.03" />
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span id="homeLoaderPercent" class="font-display text-2xl font-extrabold text-slate-900 tabular-nums">0%</span>
+                    </div>
+                </div>
+                <h3 class="font-display text-lg font-bold text-slate-900 mt-4">Loading Latest Jobs...</h3>
+                <p id="homeLoaderSubtext" class="text-xs sm:text-sm text-slate-500 mt-1">Fetching verified Government & Private listings</p>
+            </div>
+
             <!-- Job Cards Feed -->
-            <div id="feed" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <div id="feed" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-5">
                 <!-- Cards rendered via JS -->
             </div>
         </main>
@@ -368,8 +390,17 @@
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Job Description & Instructions *</label>
-                                <textarea name="description" rows="6" required placeholder="Write complete eligibility criteria, total vacancies, age limit, and step-by-step application instructions..." class="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:bg-white focus:border-blue-600 focus:outline-none"></textarea>
+                                <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                                    <label for="jobDescriptionInput" class="block text-xs font-bold text-slate-700 uppercase">Job Description & Instructions *</label>
+                                    <div class="flex items-center gap-1.5">
+                                        <button type="button" onclick="toggleBoldDescriptionSelection()" title="Select text and click to make it Bold" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-blue-600 text-white text-xs font-bold transition-colors shadow-xs">
+                                            <i class="fa-solid fa-bold"></i>
+                                            <span>Bold Selected Line</span>
+                                        </button>
+                                        <span class="text-[11px] text-slate-400 hidden sm:inline">Select text & click Bold (**text**)</span>
+                                    </div>
+                                </div>
+                                <textarea id="jobDescriptionInput" name="description" rows="7" required placeholder="Write complete eligibility criteria, total vacancies, age limit, and step-by-step application instructions... (Select any line and click Bold button above)" class="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:bg-white focus:border-blue-600 focus:outline-none"></textarea>
                             </div>
 
                             <!-- Cloudinary Media Upload Section (Image or Video) -->
@@ -498,6 +529,55 @@
         let isUploadingMedia = false;
         let currentUser = null;
         let isInitialLoad = true;
+        let isJobsLoaded = false;
+
+        // Circular Home Loader State
+        const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * 46; // 289.03
+        let loaderPercent = 0;
+        let loaderTimer = null;
+
+        function setHomeLoaderProgress(pct, subtext) {
+            loaderPercent = Math.max(0, Math.min(100, Math.round(pct)));
+            const circle = document.getElementById("homeLoaderCircle");
+            const textEl = document.getElementById("homeLoaderPercent");
+            const subEl = document.getElementById("homeLoaderSubtext");
+            if (circle) {
+                const offset = CIRCLE_CIRCUMFERENCE - (loaderPercent / 100) * CIRCLE_CIRCUMFERENCE;
+                circle.style.strokeDashoffset = offset;
+            }
+            if (textEl) textEl.textContent = `${loaderPercent}%`;
+            if (subtext && subEl) subEl.textContent = subtext;
+        }
+
+        function startHomeCircularLoader() {
+            setHomeLoaderProgress(8, "Connecting to job portal...");
+            loaderTimer = setInterval(() => {
+                if (isJobsLoaded) {
+                    clearInterval(loaderTimer);
+                    return;
+                }
+                if (loaderPercent < 45) {
+                    setHomeLoaderProgress(loaderPercent + 7, "Connecting to live database...");
+                } else if (loaderPercent < 78) {
+                    setHomeLoaderProgress(loaderPercent + 4, "Fetching verified Government & Private jobs...");
+                } else if (loaderPercent < 93) {
+                    setHomeLoaderProgress(loaderPercent + 1, "Almost ready...");
+                }
+            }, 180);
+        }
+
+        function completeHomeCircularLoader() {
+            if (isJobsLoaded) return;
+            isJobsLoaded = true;
+            if (loaderTimer) clearInterval(loaderTimer);
+            setHomeLoaderProgress(100, "Jobs loaded!");
+            setTimeout(() => {
+                const loaderBox = document.getElementById("jobsCircularLoader");
+                const feedBox = document.getElementById("feed");
+                if (loaderBox) loaderBox.classList.add("hidden");
+                if (feedBox) feedBox.classList.remove("hidden");
+            }, 220);
+        }
 
         // Default sample jobs seeded to Firestore if database is empty on first run
         const defaultSampleJobs = [
@@ -512,7 +592,7 @@
                 deadline: "2026-12-20",
                 salary: "BPS-16 to BPS-17 + Allowances",
                 apply: "https://www.fpsc.gov.pk",
-                description: "Federal Public Service Commission (FPSC) invites online applications from Pakistani citizens for multiple permanent vacancies across federal ministries and divisions.\n\nEligibility & Instructions:\n• Candidates must hold at least a 2nd Class Bachelor's or Master's degree from an HEC recognized university.\n• Age relaxation of 5 years is already included as per Federal Government rules.\n• Download the official challan form from FPSC website and deposit Rs. 300 in any National Bank of Pakistan branch before applying online.",
+                description: "Federal Public Service Commission (FPSC) invites online applications from Pakistani citizens for multiple permanent vacancies across federal ministries and divisions.\n\n**Eligibility & Instructions:**\n• Candidates must hold at least a 2nd Class Bachelor's or Master's degree from an HEC recognized university.\n• Age relaxation of 5 years is already included as per Federal Government rules.\n• Download the official challan form from FPSC website and deposit Rs. 300 in any National Bank of Pakistan branch before applying online.",
                 image: "https://placehold.co/900x450/0f172a/ffffff?text=FPSC+Federal+Government+Jobs+2026",
                 mediaType: "image",
                 created: Date.now() - 3600000
@@ -528,7 +608,7 @@
                 deadline: "2026-12-15",
                 salary: "Rs. 65,000 + Medical & Annual Bonus",
                 apply: "https://www.meezanbank.com/careers/",
-                description: "Meezan Bank, Pakistan's leading Islamic bank, is looking for fresh, energetic graduates for its Management Trainee Officer (MTO) batch across Punjab branches.\n\nKey Benefits:\n• Fast-track career progression into Branch Operations & Relationship Management.\n• Comprehensive Islamic banking certification and classroom training.\n• Provident fund, health coverage, and performance bonuses.",
+                description: "Meezan Bank, Pakistan's leading Islamic bank, is looking for fresh, energetic graduates for its Management Trainee Officer (MTO) batch across Punjab branches.\n\n**Key Benefits:**\n• Fast-track career progression into Branch Operations & Relationship Management.\n• Comprehensive Islamic banking certification and classroom training.\n• Provident fund, health coverage, and performance bonuses.",
                 image: "https://placehold.co/900x450/1d4ed8/ffffff?text=Meezan+Bank+MTO+Careers+2026",
                 mediaType: "image",
                 created: Date.now() - 7200000
@@ -545,9 +625,11 @@
 
         // Authenticate anonymously first, then subscribe to Firestore real-time updates
         async function initFirebaseSync() {
+            startHomeCircularLoader();
             try {
                 const cred = await signInAnonymously(auth);
                 currentUser = cred.user;
+                setHomeLoaderProgress(Math.max(loaderPercent, 55), "Authenticated. Loading job posts...");
 
                 // Real-time listener on Firestore jobs collection
                 onSnapshot(jobsCollectionRef, async (snapshot) => {
@@ -565,6 +647,7 @@
                         ...docSnap.data()
                     }));
 
+                    completeHomeCircularLoader();
                     render();
                     renderAdmin();
 
@@ -576,10 +659,14 @@
                     }
                 }, (error) => {
                     console.error("Firestore sync error:", error);
+                    completeHomeCircularLoader();
+                    render();
                     toast("Database sync error. Please check internet connection.");
                 });
             } catch (err) {
                 console.error("Firebase Auth error:", err);
+                completeHomeCircularLoader();
+                render();
                 toast("Unable to connect to cloud database.");
             }
         }
@@ -589,6 +676,44 @@
                 "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
             }[c]));
         }
+
+        // Safely format description text: escapes HTML first, then renders **bold** segments
+        function formatRichDescription(text) {
+            const escaped = esc(text);
+            return escaped.replace(/\*\*(.+?)\*\*/g, '<strong class="font-extrabold text-slate-950">$1</strong>');
+        }
+
+        // Strip ** markers for clean plain-text card snippet preview
+        function stripBoldMarkers(text) {
+            return String(text ?? "").replace(/\*\*(.+?)\*\*/g, "$1");
+        }
+
+        // Admin Description Bold Toolbar Button Handler
+        window.toggleBoldDescriptionSelection = function() {
+            const textarea = document.getElementById("jobDescriptionInput");
+            if (!textarea) return;
+
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const value = textarea.value;
+
+            if (start === end) {
+                toast("Pehle description mein koi line ya lafz select karein!");
+                textarea.focus();
+                return;
+            }
+
+            const selected = value.slice(start, end);
+            const isAlreadyWrapped = selected.startsWith("**") && selected.endsWith("**") && selected.length > 4;
+            const replacement = isAlreadyWrapped
+                ? selected.slice(2, -2)
+                : `**${selected}**`;
+
+            textarea.value = value.slice(0, start) + replacement + value.slice(end);
+            textarea.focus();
+            textarea.setSelectionRange(start, start + replacement.length);
+            toast(isAlreadyWrapped ? "Bold formatting removed" : "Selected text marked Bold!");
+        };
 
         function toast(msg) {
             const t = document.getElementById("toast");
@@ -615,12 +740,14 @@
 
         // Render Main Feed Cards
         window.render = function() {
+            if (!isJobsLoaded) return;
+
             const q = document.getElementById("q").value.trim().toLowerCase();
             const city = document.getElementById("city").value;
 
             const list = jobs.filter(j =>
                 (!activeType || j.type === activeType) &&
-                (!q || [j.title, j.company, j.province, j.city, j.qualification, j.description].join(" ").toLowerCase().includes(q)) &&
+                (!q || [j.title, j.company, j.province, j.city, j.qualification, stripBoldMarkers(j.description)].join(" ").toLowerCase().includes(q)) &&
                 (!city || (j.province || "").toLowerCase() === city.toLowerCase() || j.province === "All Pakistan")
             ).sort((a, b) => (b.created || 0) - (a.created || 0));
 
@@ -682,7 +809,7 @@
                                     <i class="fa-solid fa-building text-slate-400 mr-1.5"></i>${esc(j.company)}
                                 </p>
                                 <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">
-                                    ${esc(j.description)}
+                                    ${esc(stripBoldMarkers(j.description))}
                                 </p>
                             </div>
 
@@ -779,7 +906,7 @@
                     <!-- Detailed Job Description -->
                     <div class="space-y-3">
                         <h2 class="font-display text-xl font-extrabold text-slate-900">Complete Job Details & Instructions</h2>
-                        <div class="text-slate-700 text-sm sm:text-base leading-relaxed whitespace-pre-wrap bg-slate-50/60 p-5 sm:p-6 rounded-2xl border border-slate-200/60">${esc(j.description)}</div>
+                        <div class="text-slate-700 text-sm sm:text-base leading-relaxed whitespace-pre-wrap bg-slate-50/60 p-5 sm:p-6 rounded-2xl border border-slate-200/60">${formatRichDescription(j.description)}</div>
                     </div>
 
                     <!-- Official Apply Call-to-Action Box -->
@@ -838,7 +965,6 @@
         // ==========================================
         // CLOUDINARY DIRECT UPLOAD (IMAGES & VIDEOS)
         // ==========================================
-        // XMLHttpRequest is used here because it reports real upload progress.
         function uploadToCloudinary(file, onProgress) {
             return new Promise((resolve, reject) => {
                 const formData = new FormData();
