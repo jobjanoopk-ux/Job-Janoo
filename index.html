@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-site-verification" content="c-RGAnc6k3IPu1YmRSDwRwgHpohwnhAQVE9k_44PDlo" />
     <title>Job Janoo | Pakistan's Modern Govt & Private Jobs Portal</title>
     <!-- Browser Tab Icon (Favicon) -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%232563eb'/%3E%3Cstop offset='100%25' stop-color='%234338ca'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Cpath fill='%23ffffff' d='M24 18a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v4h6a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H18a4 4 0 0 1-4-4V26a4 4 0 0 1 4-4h6v-4zm4 0v4h8v-4h-8zm-10 14v3h10v-2a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2h10v-3H18z'/%3E%3C/svg%3E">
@@ -11,15 +10,18 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Google Font: Inter & Plus Jakarta Sans -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Inter, Plus Jakarta Sans & Noto Nastaliq Urdu -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Plus Jakarta Sans', 'sans-serif'],
+                        sans: ['Inter', 'Noto Nastaliq Urdu', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'Noto Nastaliq Urdu', 'sans-serif'],
+                        urdu: ['Noto Nastaliq Urdu', 'serif'],
                     }
                 }
             }
@@ -35,6 +37,18 @@
                 radial-gradient(at 12% 85%, rgba(13, 148, 136, 0.28) 0px, transparent 50%),
                 linear-gradient(135deg, #0b132b 0%, #162447 55%, #1b3b6f 100%);
         }
+        /* Nastaliq Urdu Styling */
+        .urdu-text {
+            font-family: 'Noto Nastaliq Urdu', serif !important;
+            direction: rtl;
+            text-align: right;
+            line-height: 2.25 !important;
+            letter-spacing: 0 !important;
+        }
+        .urdu-inline {
+            font-family: 'Noto Nastaliq Urdu', serif;
+            line-height: 2.1;
+        }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
@@ -47,6 +61,37 @@
             transition: stroke-dashoffset 0.22s ease-out;
             transform: rotate(-90deg);
             transform-origin: 50% 50%;
+        }
+
+        /* Pakistan Map Blinking Dots Animations */
+        @keyframes pulseRingBig {
+            0% { transform: scale(0.85); opacity: 0.9; }
+            70% { transform: scale(2.35); opacity: 0; }
+            100% { transform: scale(2.35); opacity: 0; }
+        }
+        @keyframes pulseRingSmall {
+            0% { transform: scale(0.8); opacity: 0.95; }
+            70% { transform: scale(2.15); opacity: 0; }
+            100% { transform: scale(2.15); opacity: 0; }
+        }
+        .map-dot-group { cursor: pointer; }
+        .map-dot-group:hover .map-dot-label { opacity: 1; }
+        .pulse-ring-big {
+            transform-box: fill-box;
+            transform-origin: center;
+            animation: pulseRingBig 1.8s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+        .pulse-ring-small {
+            transform-box: fill-box;
+            transform-origin: center;
+            animation: pulseRingSmall 1.5s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+        .province-shape {
+            transition: fill 0.25s ease, stroke 0.25s ease;
+            cursor: pointer;
+        }
+        .province-shape:hover {
+            fill: #dbeafe;
         }
     </style>
 </head>
@@ -88,6 +133,9 @@
                 <button onclick="navigateToHome(); setType('')" class="nav-pill px-4 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-white transition-all">All Jobs</button>
                 <button onclick="navigateToHome(); setType('Government')" class="nav-pill px-4 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-white transition-all">Government</button>
                 <button onclick="navigateToHome(); setType('Private')" class="nav-pill px-4 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-white transition-all">Private Sector</button>
+                <a href="#pakistanMapSection" onclick="navigateToHome(event); setTimeout(()=>document.getElementById('pakistanMapSection')?.scrollIntoView({behavior:'smooth'}),80)" class="nav-pill px-4 py-2 rounded-xl text-sm font-semibold text-emerald-700 hover:bg-white transition-all flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span> Live Map
+                </a>
             </nav>
 
             <!-- Admin Login Action -->
@@ -101,13 +149,32 @@
     </header>
 
     <!-- ========================================== -->
+    <!-- PROMOTIONAL BANNER (DESKTOP & MOBILE)      -->
+    <!-- ========================================== -->
+    <section id="promoBannerSection" class="hidden bg-slate-100/90 border-b border-slate-200/80 py-3 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="relative rounded-2xl overflow-hidden shadow-md border border-slate-200/90 bg-white group">
+                <span class="absolute top-2.5 left-2.5 z-10 px-2.5 py-0.5 rounded-full bg-slate-950/75 text-white text-[10px] font-bold uppercase tracking-wider backdrop-blur-xs">
+                    Sponsored
+                </span>
+                <a id="promoBannerLink" href="#" target="_blank" rel="noopener noreferrer" onclick="handleBannerClick(event)" class="block w-full focus:outline-none">
+                    <!-- Desktop Banner Image -->
+                    <img id="promoBannerDesktopImg" src="" alt="Featured Banner" class="hidden md:block w-full max-h-44 lg:max-h-52 object-cover transition-transform duration-300 group-hover:scale-[1.005]">
+                    <!-- Mobile Banner Image (falls back to Desktop image if mobile-specific image is not uploaded) -->
+                    <img id="promoBannerMobileImg" src="" alt="Featured Mobile Banner" class="block md:hidden w-full max-h-40 object-cover transition-transform duration-300 group-hover:scale-[1.005]">
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
     <!-- VIEW 1: MAIN HOME & JOB FEED PAGE          -->
     <!-- ========================================== -->
     <div id="homePageView" class="flex-grow flex flex-col fade-in">
         <!-- Modern Hero Section -->
-        <section class="hero-mesh text-white py-14 sm:py-20 px-4 relative overflow-hidden">
+        <section class="hero-mesh text-white py-12 sm:py-16 px-4 relative overflow-hidden">
             <div class="max-w-7xl mx-auto relative z-10">
-                <div class="max-w-3xl space-y-5">
+                <div class="max-w-3xl space-y-4">
                     <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 backdrop-blur-md text-xs font-semibold text-blue-200">
                         <i class="fa-solid fa-sparkles text-amber-400"></i>
                         <span>Daily FPSC, PPSC, NTS, Army, Banking & Corporate Jobs</span>
@@ -121,15 +188,15 @@
                 </div>
 
                 <!-- Elevated Search Bar -->
-                <div class="mt-8 bg-white p-2.5 rounded-2xl shadow-2xl shadow-slate-950/40 max-w-4xl border border-white/20">
+                <div class="mt-7 bg-white p-2.5 rounded-2xl shadow-2xl shadow-slate-950/40 max-w-4xl border border-white/20">
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-2">
                         <div class="md:col-span-6 relative flex items-center">
                             <i class="fa-solid fa-magnifying-glass text-slate-400 absolute left-4"></i>
-                            <input id="q" oninput="render()" type="text" placeholder="Job title, department, or keyword..." class="w-full pl-11 pr-4 py-3.5 rounded-xl bg-slate-50 text-slate-900 placeholder-slate-400 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all">
+                            <input id="q" oninput="clearCityFilter(); render()" type="text" placeholder="Job title, city, department, ya اردو میں تلاش کریں..." class="w-full pl-11 pr-4 py-3.5 rounded-xl bg-slate-50 text-slate-900 placeholder-slate-400 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all">
                         </div>
                         <div class="md:col-span-4 relative flex items-center">
                             <i class="fa-solid fa-location-dot text-slate-400 absolute left-4"></i>
-                            <select id="city" onchange="render()" class="w-full pl-10 pr-8 py-3.5 rounded-xl bg-slate-50 text-slate-800 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none cursor-pointer">
+                            <select id="city" onchange="clearCityFilter(); render()" class="w-full pl-10 pr-8 py-3.5 rounded-xl bg-slate-50 text-slate-800 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none cursor-pointer">
                                 <option value="">All Pakistan / Provinces</option>
                                 <option>Punjab</option>
                                 <option>Sindh</option>
@@ -167,9 +234,18 @@
                         <i class="fa-solid fa-building text-xs"></i> Private Jobs
                     </button>
                 </div>
-                <div class="flex items-center gap-2 px-2 text-xs sm:text-sm font-semibold text-slate-500">
-                    <span class="w-2 h-2 rounded-full bg-blue-600"></span>
-                    <span id="count">Loading jobs...</span>
+                <div class="flex items-center gap-3 px-2 text-xs sm:text-sm font-semibold text-slate-500">
+                    <span id="activeMapFilterBadge" class="hidden inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full text-xs font-bold">
+                        <i class="fa-solid fa-location-crosshairs"></i>
+                        <span id="activeMapFilterLabel"></span>
+                        <button onclick="clearMapLocationFilter()" class="ml-1 text-emerald-900 hover:text-rose-600" title="Clear location filter">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </span>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+                        <span id="count">Loading jobs...</span>
+                    </div>
                 </div>
             </div>
 
@@ -177,7 +253,7 @@
             <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
                 <div>
                     <h2 id="feedTitle" class="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Latest Job Updates</h2>
-                    <p class="text-sm text-slate-500 mt-1">Click any job card to open its full page with complete instructions & apply link.</p>
+                    <p class="text-sm text-slate-500 mt-1">Click any job card to open its full page, or use the Share button to send directly on WhatsApp.</p>
                 </div>
             </div>
 
@@ -200,6 +276,130 @@
             <div id="feed" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-5">
                 <!-- Cards rendered via JS -->
             </div>
+
+            <!-- ========================================== -->
+            <!-- INTERACTIVE PAKISTAN LIVE JOBS MAP         -->
+            <!-- ========================================== -->
+            <section id="pakistanMapSection" class="bg-white rounded-3xl border border-slate-200/90 shadow-xs p-6 sm:p-8 lg:p-10 mt-10">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-100 pb-6 mb-6">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold mb-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                            <span>Real-Time Active Jobs Radar</span>
+                        </div>
+                        <h2 class="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Pakistan Live Jobs Map</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 mt-1">
+                            Jin provinces aur cities mein active jobs hain wahan dots blink kar rahe hain. Kisi bhi dot par click karein to us shehar ya province ki jobs khul jayengi. Last date guzarne par dot khud-ba-khud hat jata hai.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3 text-xs font-semibold bg-slate-50 px-4 py-3 rounded-2xl border border-slate-200/80">
+                        <div class="flex items-center gap-2">
+                            <span class="relative flex h-4 w-4 items-center justify-center">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-600"></span>
+                            </span>
+                            <span class="text-slate-700">Province Active Dot (Bara)</span>
+                        </div>
+                        <span class="text-slate-300">|</span>
+                        <div class="flex items-center gap-2">
+                            <span class="relative flex h-3 w-3 items-center justify-center">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+                            </span>
+                            <span class="text-slate-700">City Active Dot (Chota)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <!-- SVG Map of Pakistan -->
+                    <div class="lg:col-span-7 bg-gradient-to-b from-slate-900 via-slate-900 to-blue-950 rounded-3xl p-4 sm:p-6 relative overflow-hidden border border-slate-800 shadow-inner">
+                        <div class="flex items-center justify-between text-[11px] text-slate-400 mb-2 px-1">
+                            <span><i class="fa-solid fa-satellite-dish text-emerald-400 mr-1.5"></i>Active Vacancies Radar</span>
+                            <span id="mapActiveCountBadge" class="text-emerald-400 font-bold">0 Active Locations</span>
+                        </div>
+
+                        <svg id="pakistanSvgMap" viewBox="0 0 600 540" class="w-full h-auto max-h-[470px] mx-auto select-none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <filter id="glowBlue" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feGaussianBlur stdDeviation="3" result="blur"/>
+                                    <feMerge>
+                                        <feMergeNode in="blur"/>
+                                        <feMergeNode in="SourceGraphic"/>
+                                    </feMerge>
+                                </filter>
+                                <filter id="glowGreen" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                                    <feMerge>
+                                        <feMergeNode in="blur"/>
+                                        <feMergeNode in="SourceGraphic"/>
+                                    </feMerge>
+                                </filter>
+                            </defs>
+
+                            <!-- Subtle Grid Background -->
+                            <g stroke="#1e293b" stroke-width="1" opacity="0.6">
+                                <line x1="0" y1="100" x2="600" y2="100"/><line x1="0" y1="200" x2="600" y2="200"/>
+                                <line x1="0" y1="300" x2="600" y2="300"/><line x1="0" y1="400" x2="600" y2="400"/>
+                                <line x1="120" y1="0" x2="120" y2="540"/><line x1="240" y1="0" x2="240" y2="540"/>
+                                <line x1="360" y1="0" x2="360" y2="540"/><line x1="480" y1="0" x2="480" y2="540"/>
+                            </g>
+
+                            <!-- 1. Gilgit-Baltistan -->
+                            <path onclick="filterByMapLocation('Gilgit-Baltistan', 'province')" class="province-shape" fill="#1e3a5f" stroke="#38bdf8" stroke-width="1.5"
+                                d="M 380,32 L 445,25 L 510,55 L 535,95 L 485,125 L 430,118 L 385,92 L 368,60 Z" />
+                            <text x="448" y="72" fill="#94a3b8" font-size="10" font-weight="700" text-anchor="middle" pointer-events="none">GILGIT-BALTISTAN</text>
+
+                            <!-- 2. Azad Jammu & Kashmir (AJK) -->
+                            <path onclick="filterByMapLocation('Azad Jammu & Kashmir', 'province')" class="province-shape" fill="#1e3a5f" stroke="#38bdf8" stroke-width="1.5"
+                                d="M 385,92 L 430,118 L 445,152 L 415,172 L 392,150 L 380,118 Z" />
+                            <text x="424" y="138" fill="#94a3b8" font-size="9" font-weight="700" text-anchor="middle" pointer-events="none">AJK</text>
+
+                            <!-- 3. Khyber Pakhtunkhwa (KPK) -->
+                            <path onclick="filterByMapLocation('Khyber Pakhtunkhwa', 'province')" class="province-shape" fill="#1e3a5f" stroke="#38bdf8" stroke-width="1.5"
+                                d="M 315,75 L 368,60 L 385,92 L 380,118 L 392,150 L 365,175 L 335,215 L 295,225 L 278,195 L 292,155 L 278,125 L 302,95 Z" />
+                            <text x="332" y="145" fill="#94a3b8" font-size="10" font-weight="700" text-anchor="middle" pointer-events="none">KPK</text>
+
+                            <!-- 4. Islamabad Capital Territory (ICT) -->
+                            <circle onclick="filterByMapLocation('Islamabad Capital Territory', 'province')" class="province-shape" cx="378" cy="158" r="11" fill="#2563eb" stroke="#93c5fd" stroke-width="1.5" />
+
+                            <!-- 5. Punjab -->
+                            <path onclick="filterByMapLocation('Punjab', 'province')" class="province-shape" fill="#1e3a5f" stroke="#38bdf8" stroke-width="1.5"
+                                d="M 365,175 L 392,150 L 415,172 L 455,185 L 478,225 L 448,275 L 415,325 L 365,355 L 315,335 L 295,285 L 295,225 L 335,215 Z" />
+                            <text x="385" y="255" fill="#cbd5e1" font-size="13" font-weight="800" text-anchor="middle" pointer-events="none">PUNJAB</text>
+
+                            <!-- 6. Balochistan -->
+                            <path onclick="filterByMapLocation('Balochistan', 'province')" class="province-shape" fill="#1e3a5f" stroke="#38bdf8" stroke-width="1.5"
+                                d="M 278,195 L 295,225 L 295,285 L 315,335 L 275,375 L 258,425 L 225,465 L 135,468 L 65,452 L 58,385 L 88,335 L 145,315 L 195,265 L 238,215 Z" />
+                            <text x="195" y="365" fill="#cbd5e1" font-size="13" font-weight="800" text-anchor="middle" pointer-events="none">BALOCHISTAN</text>
+
+                            <!-- 7. Sindh -->
+                            <path onclick="filterByMapLocation('Sindh', 'province')" class="province-shape" fill="#1e3a5f" stroke="#38bdf8" stroke-width="1.5"
+                                d="M 315,335 L 365,355 L 378,415 L 365,478 L 312,495 L 265,488 L 245,465 L 258,425 L 275,375 Z" />
+                            <text x="318" y="425" fill="#cbd5e1" font-size="13" font-weight="800" text-anchor="middle" pointer-events="none">SINDH</text>
+
+                            <!-- Dynamic Blinking Dots Layer (Rendered by JS based on active non-expired jobs) -->
+                            <g id="mapDynamicDotsLayer"></g>
+                        </svg>
+                    </div>
+
+                    <!-- Active Locations Quick List -->
+                    <div class="lg:col-span-5 space-y-4">
+                        <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200/80">
+                            <h3 class="font-display text-base font-extrabold text-slate-900 flex items-center justify-between">
+                                <span>Active Provinces & Cities</span>
+                                <span class="text-xs font-semibold text-blue-600">Click to Filter</span>
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-1 mb-4">
+                                Sirf wohi jobs map par show hoti hain jin ki last date abhi baqi hai.
+                            </p>
+                            <div id="mapLocationChips" class="space-y-2.5 max-h-[340px] overflow-y-auto custom-scrollbar pr-1">
+                                <!-- Populated via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -256,7 +456,7 @@
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
             <!-- Stats Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
                     <div>
                         <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Published</span>
@@ -284,6 +484,15 @@
                         <i class="fa-solid fa-briefcase"></i>
                     </div>
                 </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Banner Clicks</span>
+                        <strong id="bannerStatClicks" class="block font-display text-3xl font-extrabold text-amber-600 mt-1">0</strong>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-arrow-pointer"></i>
+                    </div>
+                </div>
             </div>
 
             <!-- Admin Navigation & Content Area -->
@@ -296,6 +505,9 @@
                         </button>
                         <button onclick="adminTab('add', this)" class="sidebtn flex-1 lg:flex-none flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all whitespace-nowrap">
                             <i class="fa-solid fa-circle-plus"></i> Publish New Job
+                        </button>
+                        <button onclick="adminTab('banner', this)" class="sidebtn flex-1 lg:flex-none flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all whitespace-nowrap">
+                            <i class="fa-solid fa-rectangle-ad"></i> Website Banner & Clicks
                         </button>
                     </div>
                 </aside>
@@ -332,19 +544,19 @@
                     <div id="aAdd" class="hidden bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 sm:p-8">
                         <div class="border-b border-slate-100 pb-4 mb-6">
                             <h2 id="formHeading" class="font-display text-xl font-bold text-slate-900">Publish a New Job</h2>
-                            <p class="text-xs text-slate-500 mt-0.5">Fill in accurate details, upload poster image or video to Cloudinary, and enter official apply URL.</p>
+                            <p class="text-xs text-slate-500 mt-0.5">English ya Urdu (Noto Nastaliq Urdu font mein automatic show hoga) mein details likhein.</p>
                         </div>
 
                         <form id="jobForm" class="space-y-5">
                             <input type="hidden" name="id">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Job Title *</label>
-                                    <input name="title" required placeholder="e.g. Junior Clerk (BPS-11)" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:bg-white focus:border-blue-600 focus:outline-none">
+                                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Job Title (English / اردو) *</label>
+                                    <input name="title" oninput="applyAutoUrduDirection(this)" required placeholder="e.g. Junior Clerk (BPS-11) یا جونیئر کلرک بھرتی" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:bg-white focus:border-blue-600 focus:outline-none">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Department / Company *</label>
-                                    <input name="company" required placeholder="e.g. Punjab Public Service Commission" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:bg-white focus:border-blue-600 focus:outline-none">
+                                    <input name="company" oninput="applyAutoUrduDirection(this)" required placeholder="e.g. Punjab Public Service Commission" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:bg-white focus:border-blue-600 focus:outline-none">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Job Type *</label>
@@ -354,7 +566,7 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Province / Region *</label>
+                                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Province / Region (Map Dot) *</label>
                                     <select name="province" required class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:bg-white focus:border-blue-600 focus:outline-none">
                                         <option value="">Select province / region</option>
                                         <option>Punjab</option>
@@ -368,20 +580,20 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">City (Optional)</label>
-                                    <input name="city" placeholder="e.g. Lahore, Karachi, Islamabad" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:bg-white focus:border-blue-600 focus:outline-none">
+                                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">City (Map Small Dot)</label>
+                                    <input name="city" placeholder="e.g. Multan, Lahore, Karachi, Peshawar, Quetta" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:bg-white focus:border-blue-600 focus:outline-none">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Qualification</label>
-                                    <input name="qualification" placeholder="e.g. Matric, Intermediate, Bachelor, Master" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:bg-white focus:border-blue-600 focus:outline-none">
+                                    <input name="qualification" oninput="applyAutoUrduDirection(this)" placeholder="e.g. Matric, Intermediate, Bachelor, Master" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:bg-white focus:border-blue-600 focus:outline-none">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Last Date to Apply</label>
+                                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Last Date to Apply (Map Expiry)</label>
                                     <input name="deadline" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:bg-white focus:border-blue-600 focus:outline-none">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Salary / Pay Scale</label>
-                                    <input name="salary" placeholder="e.g. BPS-14 / Rs. 55,000" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:bg-white focus:border-blue-600 focus:outline-none">
+                                    <input name="salary" oninput="applyAutoUrduDirection(this)" placeholder="e.g. BPS-14 / Rs. 55,000" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:bg-white focus:border-blue-600 focus:outline-none">
                                 </div>
                             </div>
 
@@ -392,16 +604,16 @@
 
                             <div>
                                 <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
-                                    <label for="jobDescriptionInput" class="block text-xs font-bold text-slate-700 uppercase">Job Description & Instructions *</label>
+                                    <label for="jobDescriptionInput" class="block text-xs font-bold text-slate-700 uppercase">Job Description & Instructions (English / اردو) *</label>
                                     <div class="flex items-center gap-1.5">
                                         <button type="button" onclick="toggleBoldDescriptionSelection()" title="Select text and click to make it Bold" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-blue-600 text-white text-xs font-bold transition-colors shadow-xs">
                                             <i class="fa-solid fa-bold"></i>
                                             <span>Bold Selected Line</span>
                                         </button>
-                                        <span class="text-[11px] text-slate-400 hidden sm:inline">Select text & click Bold (**text**)</span>
+                                        <span class="text-[11px] text-slate-400 hidden sm:inline">Urdu text automatically uses Noto Nastaliq Urdu</span>
                                     </div>
                                 </div>
-                                <textarea id="jobDescriptionInput" name="description" rows="7" required placeholder="Write complete eligibility criteria, total vacancies, age limit, and step-by-step application instructions... (Select any line and click Bold button above)" class="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:bg-white focus:border-blue-600 focus:outline-none"></textarea>
+                                <textarea id="jobDescriptionInput" name="description" oninput="applyAutoUrduDirection(this)" rows="7" required placeholder="Write complete eligibility criteria, total vacancies, age limit, or write in اردو (Noor/Noto Nastaliq font mein khubsurat show hoga)..." class="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:bg-white focus:border-blue-600 focus:outline-none"></textarea>
                             </div>
 
                             <!-- Cloudinary Media Upload Section (Image or Video) -->
@@ -440,6 +652,88 @@
                             </div>
                         </form>
                     </div>
+
+                    <!-- Tab 3: Website Banner Manager & Click Counter -->
+                    <div id="aBanner" class="hidden bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 sm:p-8 space-y-6">
+                        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                            <div>
+                                <h2 class="font-display text-xl font-bold text-slate-900">Desktop & Mobile Promotional Banner</h2>
+                                <p class="text-xs text-slate-500 mt-0.5">Apni gallery se banner upload karein aur link lagayein. Naya banner lagane par clicks 0 se shuru honge.</p>
+                            </div>
+                            <!-- Live Click Counter Box -->
+                            <div class="bg-amber-50 border border-amber-200 px-4 py-3 rounded-2xl flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center text-lg shadow-xs">
+                                    <i class="fa-solid fa-hand-pointer"></i>
+                                </div>
+                                <div>
+                                    <span class="block text-[10px] font-bold uppercase tracking-wider text-amber-700">Current Banner Clicks</span>
+                                    <strong id="adminBannerClickCount" class="font-display text-2xl font-extrabold text-amber-900 tabular-nums">0</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <form id="bannerForm" class="space-y-5">
+                            <div class="flex items-center justify-between bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
+                                <div>
+                                    <span class="font-bold text-sm text-slate-900 block">Show Banner on Website</span>
+                                    <span class="text-xs text-slate-500">Isay on rakhne se desktop aur mobile dono par banner nazar aayega.</span>
+                                </div>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="bannerActiveInput" checked class="sr-only peer">
+                                    <div class="relative w-12 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                </label>
+                            </div>
+
+                            <!-- Desktop Banner Upload -->
+                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-3">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <label class="text-xs font-bold text-slate-700 uppercase">
+                                        <i class="fa-solid fa-desktop text-blue-600 mr-1.5"></i>Desktop Banner Image (Gallery Upload) *
+                                    </label>
+                                    <span class="text-[11px] text-slate-400">Recommended: 1200×220 px</span>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <input type="file" id="bannerDesktopFile" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
+                                    <input type="url" id="bannerDesktopUrl" placeholder="Or paste Desktop image URL..." class="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs focus:border-blue-600 focus:outline-none">
+                                </div>
+                                <p id="bannerDesktopStatus" class="text-[11px] text-slate-500"></p>
+                                <img id="bannerDesktopPreview" class="hidden w-full max-h-40 object-cover rounded-xl border border-slate-200 bg-white" alt="Desktop banner preview">
+                            </div>
+
+                            <!-- Mobile Banner Upload (Optional) -->
+                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-3">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <label class="text-xs font-bold text-slate-700 uppercase">
+                                        <i class="fa-solid fa-mobile-screen-button text-emerald-600 mr-1.5"></i>Mobile Banner Image (Optional — Gallery Upload)
+                                    </label>
+                                    <span class="text-[11px] text-slate-400">Agar khali choren to Desktop banner hi mobile par chalega</span>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <input type="file" id="bannerMobileFile" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 cursor-pointer">
+                                    <input type="url" id="bannerMobileUrl" placeholder="Or paste Mobile image URL..." class="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs focus:border-blue-600 focus:outline-none">
+                                </div>
+                                <p id="bannerMobileStatus" class="text-[11px] text-slate-500"></p>
+                                <img id="bannerMobilePreview" class="hidden w-full max-h-36 object-cover rounded-xl border border-slate-200 bg-white" alt="Mobile banner preview">
+                            </div>
+
+                            <!-- Target Link -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">
+                                    <i class="fa-solid fa-link text-blue-600 mr-1.5"></i>Banner Target Link (Click karne par yeh khulega) *
+                                </label>
+                                <input type="url" id="bannerTargetLink" required placeholder="https://example.com/offer-or-channel" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:bg-white focus:border-blue-600 focus:outline-none">
+                            </div>
+
+                            <div class="flex flex-wrap items-center gap-3 pt-2">
+                                <button type="submit" id="saveBannerBtn" class="px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-lg shadow-blue-600/25 transition-all">
+                                    <i class="fa-solid fa-floppy-disk mr-1.5"></i>Save & Publish Banner (Reset Clicks to 0)
+                                </button>
+                                <button type="button" onclick="removeWebsiteBanner()" class="px-5 py-3.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold text-sm transition-all">
+                                    <i class="fa-solid fa-trash-can mr-1.5"></i>Remove Banner
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </section>
             </div>
         </div>
@@ -456,7 +750,7 @@
                     <i class="fa-solid fa-lock"></i>
                 </div>
                 <h2 class="font-display text-xl font-extrabold text-slate-900">Admin Access</h2>
-                <p class="text-xs text-slate-500">Enter administrator password to manage job listings.</p>
+                <p class="text-xs text-slate-500">Enter administrator password to manage job listings & banners.</p>
             </div>
             <form id="loginForm" class="space-y-4">
                 <div>
@@ -466,6 +760,37 @@
                     Unlock Dashboard
                 </button>
             </form>
+        </div>
+    </div>
+
+    <!-- Share Post Modal (Copy Link + WhatsApp Direct Share) -->
+    <div id="sharePostModal" class="hidden fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4" onclick="if(event.target === this) closeShareModal()">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 sm:p-7 border border-slate-200 relative fade-in space-y-5">
+            <button onclick="closeShareModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="space-y-1 pr-6">
+                <span class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-blue-600">
+                    <i class="fa-solid fa-share-nodes"></i> Share Direct Job Link
+                </span>
+                <h3 id="shareModalJobTitle" class="font-display text-lg font-extrabold text-slate-900 line-clamp-2">Job Post</h3>
+                <p class="text-xs text-slate-500">Is link par click karne se seedha yahi job post open hogi.</p>
+            </div>
+
+            <!-- Copyable URL Box -->
+            <div class="flex items-center gap-2 bg-slate-50 p-2 rounded-2xl border border-slate-200">
+                <input id="shareModalUrlInput" type="text" readonly class="w-full bg-transparent px-2.5 py-1.5 text-xs font-medium text-slate-700 focus:outline-none select-all">
+                <button onclick="copyShareModalLink()" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-blue-600 text-white text-xs font-bold transition-colors shrink-0 flex items-center gap-1.5">
+                    <i class="fa-regular fa-copy"></i>
+                    <span>Copy Link</span>
+                </button>
+            </div>
+
+            <!-- WhatsApp Direct Send Button -->
+            <a id="shareModalWhatsappBtn" href="#" target="_blank" rel="noopener noreferrer" class="w-full py-3.5 px-5 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm shadow-lg shadow-emerald-500/25 transition-all flex items-center justify-center gap-2.5">
+                <i class="fa-brands fa-whatsapp text-xl"></i>
+                <span>Send on WhatsApp</span>
+            </a>
         </div>
     </div>
 
@@ -495,7 +820,7 @@
         // Import Firebase SDKs
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Cloudinary Configuration
         const CLOUDINARY_CLOUD_NAME = "cqorvh7w";
@@ -519,21 +844,253 @@
         const db = getFirestore(app);
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'jobjanoo';
 
-        // Public jobs collection path in Firestore
+        // Firestore References
         const jobsCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'jobs');
+        const bannerDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'siteSettings', 'promoBanner');
 
         const ADMIN_PASSWORD = "626277";
         let jobs = [];
         let activeType = "";
+        let activeMapFilter = null; // { type: 'province' | 'city', value: 'Multan' }
         let uploadedMediaUrl = "";
-        let uploadedMediaType = "image"; // "image" or "video"
+        let uploadedMediaType = "image";
         let isUploadingMedia = false;
+        let isUploadingBanner = false;
         let currentUser = null;
         let isInitialLoad = true;
         let isJobsLoaded = false;
+        let currentBannerData = null;
 
-        // Circular Home Loader State
-        const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * 46; // 289.03
+        // ==========================================
+        // URDU SCRIPT DETECTION (NOTO NASTALIQ URDU)
+        // ==========================================
+        function containsUrdu(text) {
+            return /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/.test(String(text || ""));
+        }
+
+        window.applyAutoUrduDirection = function(el) {
+            if (!el) return;
+            if (containsUrdu(el.value)) {
+                el.classList.add("urdu-text");
+            } else {
+                el.classList.remove("urdu-text");
+            }
+        };
+
+        // ==========================================
+        // PAKISTAN MAP COORDINATES & EXPIRY LOGIC
+        // ==========================================
+        const PROVINCE_COORDS = {
+            "Punjab": { x: 385, y: 245, label: "Punjab" },
+            "Sindh": { x: 318, y: 412, label: "Sindh" },
+            "Khyber Pakhtunkhwa": { x: 332, y: 138, label: "KPK" },
+            "Balochistan": { x: 195, y: 350, label: "Balochistan" },
+            "Islamabad Capital Territory": { x: 378, y: 158, label: "Islamabad" },
+            "Gilgit-Baltistan": { x: 448, y: 68, label: "Gilgit-Baltistan" },
+            "Azad Jammu & Kashmir": { x: 422, y: 135, label: "AJK" }
+        };
+
+        const CITY_COORDS = {
+            "lahore": { x: 432, y: 218, province: "Punjab", label: "Lahore" },
+            "multan": { x: 352, y: 295, province: "Punjab", label: "Multan" },
+            "rawalpindi": { x: 382, y: 168, province: "Punjab", label: "Rawalpindi" },
+            "faisalabad": { x: 392, y: 228, province: "Punjab", label: "Faisalabad" },
+            "gujranwala": { x: 415, y: 196, province: "Punjab", label: "Gujranwala" },
+            "sialkot": { x: 428, y: 185, province: "Punjab", label: "Sialkot" },
+            "sahiwal": { x: 392, y: 262, province: "Punjab", label: "Sahiwal" },
+            "bahawalpur": { x: 355, y: 332, province: "Punjab", label: "Bahawalpur" },
+            "sargodha": { x: 372, y: 205, province: "Punjab", label: "Sargodha" },
+            "rahim yar khan": { x: 325, y: 342, province: "Punjab", label: "Rahim Yar Khan" },
+            "dera ghazi khan": { x: 320, y: 292, province: "Punjab", label: "D.G. Khan" },
+            "karachi": { x: 268, y: 476, province: "Sindh", label: "Karachi" },
+            "hyderabad": { x: 298, y: 455, province: "Sindh", label: "Hyderabad" },
+            "sukkur": { x: 332, y: 368, province: "Sindh", label: "Sukkur" },
+            "larkana": { x: 312, y: 382, province: "Sindh", label: "Larkana" },
+            "nawabshah": { x: 316, y: 426, province: "Sindh", label: "Nawabshah" },
+            "mirpurkhas": { x: 334, y: 452, province: "Sindh", label: "Mirpurkhas" },
+            "peshawar": { x: 328, y: 148, province: "Khyber Pakhtunkhwa", label: "Peshawar" },
+            "mardan": { x: 342, y: 140, province: "Khyber Pakhtunkhwa", label: "Mardan" },
+            "abbottabad": { x: 372, y: 132, province: "Khyber Pakhtunkhwa", label: "Abbottabad" },
+            "swat": { x: 356, y: 105, province: "Khyber Pakhtunkhwa", label: "Swat" },
+            "kohat": { x: 324, y: 165, province: "Khyber Pakhtunkhwa", label: "Kohat" },
+            "dera ismail khan": { x: 312, y: 222, province: "Khyber Pakhtunkhwa", label: "D.I. Khan" },
+            "quetta": { x: 232, y: 255, province: "Balochistan", label: "Quetta" },
+            "gwadar": { x: 95, y: 448, province: "Balochistan", label: "Gwadar" },
+            "turbat": { x: 128, y: 432, province: "Balochistan", label: "Turbat" },
+            "khuzdar": { x: 228, y: 355, province: "Balochistan", label: "Khuzdar" },
+            "sibi": { x: 262, y: 282, province: "Balochistan", label: "Sibi" },
+            "islamabad": { x: 378, y: 158, province: "Islamabad Capital Territory", label: "Islamabad" },
+            "gilgit": { x: 438, y: 65, province: "Gilgit-Baltistan", label: "Gilgit" },
+            "skardu": { x: 478, y: 78, province: "Gilgit-Baltistan", label: "Skardu" },
+            "muzaffarabad": { x: 405, y: 128, province: "Azad Jammu & Kashmir", label: "Muzaffarabad" },
+            "mirpur": { x: 412, y: 164, province: "Azad Jammu & Kashmir", label: "Mirpur" }
+        };
+
+        // Check if a job's deadline has NOT passed yet
+        function isJobActiveForMap(job) {
+            if (!job || !job.deadline) return true; // If no deadline date set, treat as active
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const parts = String(job.deadline).split("-");
+            if (parts.length !== 3) return true;
+            const deadlineDate = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+            deadlineDate.setHours(23, 59, 59, 999);
+            return deadlineDate >= today;
+        }
+
+        function renderPakistanJobsMap() {
+            const dotsLayer = document.getElementById("mapDynamicDotsLayer");
+            const chipsContainer = document.getElementById("mapLocationChips");
+            const countBadge = document.getElementById("mapActiveCountBadge");
+            if (!dotsLayer || !chipsContainer) return;
+
+            const activeJobs = jobs.filter(isJobActiveForMap);
+            const provinceCounts = {};
+            const cityCounts = {}; // key: lowercase city name -> { label, province, count, coords }
+
+            activeJobs.forEach(job => {
+                const prov = (job.province || "").trim();
+                if (prov === "All Pakistan") {
+                    Object.keys(PROVINCE_COORDS).forEach(pKey => {
+                        provinceCounts[pKey] = (provinceCounts[pKey] || 0) + 1;
+                    });
+                } else if (PROVINCE_COORDS[prov]) {
+                    provinceCounts[prov] = (provinceCounts[prov] || 0) + 1;
+                }
+
+                // Parse comma-separated cities (e.g. "Multan, Lahore")
+                if (job.city) {
+                    const rawCities = String(job.city).split(/[,/&]+/).map(c => c.trim()).filter(Boolean);
+                    rawCities.forEach(cName => {
+                        const key = cName.toLowerCase();
+                        const matchedCity = CITY_COORDS[key];
+                        if (matchedCity) {
+                            if (!cityCounts[key]) {
+                                cityCounts[key] = {
+                                    label: matchedCity.label,
+                                    province: matchedCity.province,
+                                    coords: matchedCity,
+                                    count: 0
+                                };
+                            }
+                            cityCounts[key].count += 1;
+                            // Ensure the city's parent province also lights up if not already counted
+                            if (!prov || prov === "All Pakistan") return;
+                            if (!provinceCounts[matchedCity.province]) {
+                                provinceCounts[matchedCity.province] = 1;
+                            }
+                        }
+                    });
+                }
+            });
+
+            let svgMarkup = "";
+            let totalActiveLocations = 0;
+
+            // 1. Render Larger Blinking Dots for Active Provinces
+            Object.entries(provinceCounts).forEach(([provName, count]) => {
+                const pt = PROVINCE_COORDS[provName];
+                if (!pt || count <= 0) return;
+                totalActiveLocations++;
+                svgMarkup += `
+                    <g class="map-dot-group" onclick="filterByMapLocation('${esc(provName)}', 'province')">
+                        <circle cx="${pt.x}" cy="${pt.y}" r="14" fill="#3b82f6" class="pulse-ring-big" />
+                        <circle cx="${pt.x}" cy="${pt.y}" r="7.5" fill="#2563eb" stroke="#ffffff" stroke-width="2" filter="url(#glowBlue)" />
+                        <text x="${pt.x}" y="${pt.y - 12}" fill="#93c5fd" font-size="10" font-weight="800" text-anchor="middle">${esc(pt.label)} (${count})</text>
+                    </g>`;
+            });
+
+            // 2. Render Smaller Blinking Dots for Active Cities (e.g., Multan, Lahore)
+            Object.values(cityCounts).forEach(cityObj => {
+                if (cityObj.count <= 0) return;
+                totalActiveLocations++;
+                const { x, y } = cityObj.coords;
+                svgMarkup += `
+                    <g class="map-dot-group" onclick="filterByMapLocation('${esc(cityObj.label)}', 'city')">
+                        <circle cx="${x}" cy="${y}" r="9" fill="#10b981" class="pulse-ring-small" />
+                        <circle cx="${x}" cy="${y}" r="4.5" fill="#10b981" stroke="#ffffff" stroke-width="1.5" filter="url(#glowGreen)" />
+                        <text x="${x}" y="${y + 13}" fill="#6ee7b7" font-size="9" font-weight="700" text-anchor="middle">${esc(cityObj.label)} (${cityObj.count})</text>
+                    </g>`;
+            });
+
+            dotsLayer.innerHTML = svgMarkup;
+            if (countBadge) {
+                countBadge.textContent = `${totalActiveLocations} Active ${totalActiveLocations === 1 ? 'Location' : 'Locations'}`;
+            }
+
+            // Render Clickable Location List beside Map
+            const provinceItems = Object.entries(provinceCounts).map(([pName, count]) => `
+                <button onclick="filterByMapLocation('${esc(pName)}', 'province')" class="w-full flex items-center justify-between p-3 rounded-xl bg-white hover:bg-blue-50 border border-slate-200/80 hover:border-blue-300 transition-all text-left group">
+                    <div class="flex items-center gap-2.5">
+                        <span class="relative flex h-3.5 w-3.5 items-center justify-center">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-600"></span>
+                        </span>
+                        <div>
+                            <span class="text-xs font-extrabold text-slate-900 group-hover:text-blue-700 block">${esc(pName)}</span>
+                            <span class="text-[10px] font-semibold text-slate-400">Province / Region</span>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold">${count} ${count === 1 ? 'Job' : 'Jobs'}</span>
+                </button>
+            `).join("");
+
+            const cityItems = Object.values(cityCounts).map(c => `
+                <button onclick="filterByMapLocation('${esc(c.label)}', 'city')" class="w-full flex items-center justify-between p-2.5 pl-4 rounded-xl bg-white hover:bg-emerald-50 border border-slate-200/80 hover:border-emerald-300 transition-all text-left group">
+                    <div class="flex items-center gap-2.5">
+                        <span class="relative flex h-2.5 w-2.5 items-center justify-center">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+                        </span>
+                        <div>
+                            <span class="text-xs font-bold text-slate-800 group-hover:text-emerald-700 block">${esc(c.label)}</span>
+                            <span class="text-[10px] text-slate-400">${esc(c.province)} • City</span>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold">${c.count} ${c.count === 1 ? 'Job' : 'Jobs'}</span>
+                </button>
+            `).join("");
+
+            if (!provinceItems && !cityItems) {
+                chipsContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">Abhi koi active location dot mojood nahi hai.</p>`;
+            } else {
+                chipsContainer.innerHTML = provinceItems + cityItems;
+            }
+        }
+
+        window.filterByMapLocation = function(locationName, filterKind) {
+            activeMapFilter = { type: filterKind, value: locationName };
+            document.getElementById("q").value = "";
+            document.getElementById("city").value = filterKind === "province" ? locationName : "";
+
+            const badge = document.getElementById("activeMapFilterBadge");
+            const label = document.getElementById("activeMapFilterLabel");
+            if (badge && label) {
+                label.textContent = `${filterKind === "city" ? "City" : "Province"}: ${locationName}`;
+                badge.classList.remove("hidden");
+            }
+
+            render();
+            document.getElementById("listing")?.scrollIntoView({ behavior: "smooth" });
+            toast(`Showing active jobs in ${locationName}`);
+        };
+
+        window.clearCityFilter = function() {
+            activeMapFilter = null;
+            document.getElementById("activeMapFilterBadge")?.classList.add("hidden");
+        };
+
+        window.clearMapLocationFilter = function() {
+            activeMapFilter = null;
+            document.getElementById("city").value = "";
+            document.getElementById("activeMapFilterBadge")?.classList.add("hidden");
+            render();
+        };
+
+        // ==========================================
+        // CIRCULAR HOME LOADER
+        // ==========================================
+        const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * 46;
         let loaderPercent = 0;
         let loaderTimer = null;
 
@@ -593,7 +1150,7 @@
                 deadline: "2026-12-20",
                 salary: "BPS-16 to BPS-17 + Allowances",
                 apply: "https://www.fpsc.gov.pk",
-                description: "Federal Public Service Commission (FPSC) invites online applications from Pakistani citizens for multiple permanent vacancies across federal ministries and divisions.\n\n**Eligibility & Instructions:**\n• Candidates must hold at least a 2nd Class Bachelor's or Master's degree from an HEC recognized university.\n• Age relaxation of 5 years is already included as per Federal Government rules.\n• Download the official challan form from FPSC website and deposit Rs. 300 in any National Bank of Pakistan branch before applying online.",
+                description: "Federal Public Service Commission (FPSC) invites online applications from Pakistani citizens for multiple permanent vacancies across federal ministries and divisions.\n\n**اہم ہدایات برائے امیدواران:**\nامیدواروں کے پاس ایچ ای سی سے تسلیم شدہ یونیورسٹی کی ڈگری ہونا لازمی ہے۔ آن لائن درخواست دینے سے پہلے سرکاری اشتہار کو غور سے پڑھیں۔",
                 image: "https://placehold.co/900x450/0f172a/ffffff?text=FPSC+Federal+Government+Jobs+2026",
                 mediaType: "image",
                 created: Date.now() - 3600000
@@ -604,19 +1161,18 @@
                 company: "Meezan Bank Limited",
                 type: "Private",
                 province: "Punjab",
-                city: "Lahore, Rawalpindi, Multan",
+                city: "Lahore, Multan",
                 qualification: "BBA / MBA / B.Com / BS Accounting & Finance",
                 deadline: "2026-12-15",
                 salary: "Rs. 65,000 + Medical & Annual Bonus",
                 apply: "https://www.meezanbank.com/careers/",
-                description: "Meezan Bank, Pakistan's leading Islamic bank, is looking for fresh, energetic graduates for its Management Trainee Officer (MTO) batch across Punjab branches.\n\n**Key Benefits:**\n• Fast-track career progression into Branch Operations & Relationship Management.\n• Comprehensive Islamic banking certification and classroom training.\n• Provident fund, health coverage, and performance bonuses.",
+                description: "Meezan Bank, Pakistan's leading Islamic bank, is looking for fresh, energetic graduates for its Management Trainee Officer (MTO) batch across Punjab branches (Lahore & Multan).\n\n**Key Benefits:**\n• Fast-track career progression into Branch Operations & Relationship Management.\n• Comprehensive Islamic banking certification and classroom training.\n• Provident fund, health coverage, and performance bonuses.",
                 image: "https://placehold.co/900x450/1d4ed8/ffffff?text=Meezan+Bank+MTO+Careers+2026",
                 mediaType: "image",
                 created: Date.now() - 7200000
             }
         ];
 
-        // Helper to detect if a URL is a video
         function isVideoMedia(job) {
             if (!job) return false;
             if (job.mediaType === "video") return true;
@@ -624,13 +1180,202 @@
             return /\.(mp4|webm|ogg|mov)(\?|$)/i.test(url) || url.includes("/video/upload/");
         }
 
-        // Authenticate anonymously first, then subscribe to Firestore real-time updates
+        // ==========================================
+        // BANNER SYNC, DISPLAY & CLICK TRACKING
+        // ==========================================
+        function renderPromoBannerUI(data) {
+            currentBannerData = data;
+            const section = document.getElementById("promoBannerSection");
+            const linkEl = document.getElementById("promoBannerLink");
+            const deskImg = document.getElementById("promoBannerDesktopImg");
+            const mobImg = document.getElementById("promoBannerMobileImg");
+
+            // Admin stats sync
+            const clicks = data && typeof data.clicks === "number" ? data.clicks : 0;
+            const stat1 = document.getElementById("bannerStatClicks");
+            const stat2 = document.getElementById("adminBannerClickCount");
+            if (stat1) stat1.textContent = clicks;
+            if (stat2) stat2.textContent = clicks;
+
+            // Populate admin banner inputs if available
+            if (data) {
+                const deskInput = document.getElementById("bannerDesktopUrl");
+                const mobInput = document.getElementById("bannerMobileUrl");
+                const targetInput = document.getElementById("bannerTargetLink");
+                const activeCheck = document.getElementById("bannerActiveInput");
+                const deskPrev = document.getElementById("bannerDesktopPreview");
+                const mobPrev = document.getElementById("bannerMobilePreview");
+
+                if (deskInput && !deskInput.value) deskInput.value = data.desktopImage || "";
+                if (mobInput && !mobInput.value) mobInput.value = data.mobileImage || "";
+                if (targetInput && !targetInput.value) targetInput.value = data.targetUrl || "";
+                if (activeCheck) activeCheck.checked = data.active !== false;
+
+                if (data.desktopImage && deskPrev) {
+                    deskPrev.src = data.desktopImage;
+                    deskPrev.classList.remove("hidden");
+                }
+                if (data.mobileImage && mobPrev) {
+                    mobPrev.src = data.mobileImage;
+                    mobPrev.classList.remove("hidden");
+                }
+            }
+
+            if (!data || data.active === false || !data.desktopImage) {
+                section?.classList.add("hidden");
+                return;
+            }
+
+            deskImg.src = data.desktopImage;
+            mobImg.src = data.mobileImage || data.desktopImage;
+            linkEl.href = data.targetUrl || "#";
+            section.classList.remove("hidden");
+        }
+
+        window.handleBannerClick = async function(event) {
+            if (!currentBannerData || !currentBannerData.targetUrl) {
+                event.preventDefault();
+                return;
+            }
+            try {
+                await updateDoc(bannerDocRef, {
+                    clicks: increment(1)
+                });
+            } catch (err) {
+                console.error("Failed to record banner click:", err);
+            }
+        };
+
+        // Upload Desktop or Mobile Banner from Admin Gallery
+        async function handleBannerFileUpload(fileInputId, urlInputId, previewId, statusId) {
+            const file = document.getElementById(fileInputId)?.files?.[0];
+            if (!file) return;
+
+            const statusEl = document.getElementById(statusId);
+            const prevEl = document.getElementById(previewId);
+            const saveBtn = document.getElementById("saveBannerBtn");
+
+            isUploadingBanner = true;
+            if (saveBtn) {
+                saveBtn.disabled = true;
+                saveBtn.classList.add("opacity-60");
+            }
+            if (statusEl) {
+                statusEl.innerHTML = `<span class="text-blue-600 font-bold"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Uploading banner to Cloudinary...</span>`;
+            }
+
+            try {
+                const res = await uploadToCloudinary(file);
+                document.getElementById(urlInputId).value = res.secure_url;
+                if (prevEl) {
+                    prevEl.src = res.secure_url;
+                    prevEl.classList.remove("hidden");
+                }
+                if (statusEl) {
+                    statusEl.innerHTML = `<span class="text-emerald-600 font-bold"><i class="fa-solid fa-circle-check mr-1"></i> Banner image uploaded!</span>`;
+                }
+                toast("Banner image uploaded successfully");
+            } catch (err) {
+                if (statusEl) {
+                    statusEl.innerHTML = `<span class="text-rose-600 font-bold">Upload failed: ${esc(err.message)}</span>`;
+                }
+                toast("Banner upload failed");
+            } finally {
+                isUploadingBanner = false;
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.classList.remove("opacity-60");
+                }
+            }
+        }
+
+        document.getElementById("bannerDesktopFile")?.addEventListener("change", () => {
+            handleBannerFileUpload("bannerDesktopFile", "bannerDesktopUrl", "bannerDesktopPreview", "bannerDesktopStatus");
+        });
+        document.getElementById("bannerMobileFile")?.addEventListener("change", () => {
+            handleBannerFileUpload("bannerMobileFile", "bannerMobileUrl", "bannerMobilePreview", "bannerMobileStatus");
+        });
+
+        document.getElementById("bannerForm")?.addEventListener("submit", async e => {
+            e.preventDefault();
+            if (isUploadingBanner) {
+                toast("Banner image upload hone ka intezar karein...");
+                return;
+            }
+            const desktopImage = document.getElementById("bannerDesktopUrl").value.trim();
+            const mobileImage = document.getElementById("bannerMobileUrl").value.trim();
+            const targetUrl = document.getElementById("bannerTargetLink").value.trim();
+            const active = document.getElementById("bannerActiveInput").checked;
+
+            if (!desktopImage) {
+                toast("Desktop banner image upload karein ya URL dalein");
+                return;
+            }
+            if (!/^https?:\/\//i.test(targetUrl)) {
+                toast("Banner link http:// ya https:// se shuru hona chahiye");
+                return;
+            }
+
+            const btn = document.getElementById("saveBannerBtn");
+            btn.disabled = true;
+            try {
+                // Saving a new banner resets clicks to 0 as requested
+                await setDoc(bannerDocRef, {
+                    desktopImage,
+                    mobileImage,
+                    targetUrl,
+                    active,
+                    clicks: 0,
+                    updatedAt: Date.now()
+                });
+                toast("New Banner published! Clicks reset to 0.");
+            } catch (err) {
+                console.error("Banner save error:", err);
+                toast("Failed to save banner settings");
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        window.removeWebsiteBanner = async function() {
+            try {
+                await setDoc(bannerDocRef, {
+                    desktopImage: "",
+                    mobileImage: "",
+                    targetUrl: "",
+                    active: false,
+                    clicks: 0,
+                    updatedAt: Date.now()
+                });
+                document.getElementById("bannerDesktopUrl").value = "";
+                document.getElementById("bannerMobileUrl").value = "";
+                document.getElementById("bannerTargetLink").value = "";
+                document.getElementById("bannerDesktopPreview").classList.add("hidden");
+                document.getElementById("bannerMobilePreview").classList.add("hidden");
+                toast("Banner removed from website");
+            } catch (err) {
+                toast("Error removing banner");
+            }
+        };
+
+        // ==========================================
+        // FIREBASE INITIALIZATION & REAL-TIME SYNC
+        // ==========================================
         async function initFirebaseSync() {
             startHomeCircularLoader();
             try {
                 const cred = await signInAnonymously(auth);
                 currentUser = cred.user;
                 setHomeLoaderProgress(Math.max(loaderPercent, 55), "Authenticated. Loading job posts...");
+
+                // Real-time listener for Banner Ad
+                onSnapshot(bannerDocRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        renderPromoBannerUI(docSnap.data());
+                    } else {
+                        renderPromoBannerUI(null);
+                    }
+                });
 
                 // Real-time listener on Firestore jobs collection
                 onSnapshot(jobsCollectionRef, async (snapshot) => {
@@ -651,6 +1396,7 @@
                     completeHomeCircularLoader();
                     render();
                     renderAdmin();
+                    renderPakistanJobsMap();
 
                     if (location.hash.startsWith("#job-")) {
                         const initialId = decodeURIComponent(location.hash.replace("#job-", ""));
@@ -678,13 +1424,19 @@
             }[c]));
         }
 
-        // Safely format description text: escapes HTML first, then renders **bold** segments
+        // Safely format description text: escapes HTML first, renders **bold**, and applies Noto Nastaliq Urdu to Urdu lines
         function formatRichDescription(text) {
-            const escaped = esc(text);
-            return escaped.replace(/\*\*(.+?)\*\*/g, '<strong class="font-extrabold text-slate-950">$1</strong>');
+            const lines = String(text ?? "").split("\n");
+            return lines.map(line => {
+                const escaped = esc(line);
+                const boldFormatted = escaped.replace(/\*\*(.+?)\*\*/g, '<strong class="font-extrabold text-slate-950">$1</strong>');
+                if (containsUrdu(line)) {
+                    return `<div class="urdu-text py-0.5">${boldFormatted || "&nbsp;"}</div>`;
+                }
+                return `<div>${boldFormatted || "&nbsp;"}</div>`;
+            }).join("");
         }
 
-        // Strip ** markers for clean plain-text card snippet preview
         function stripBoldMarkers(text) {
             return String(text ?? "").replace(/\*\*(.+?)\*\*/g, "$1");
         }
@@ -723,6 +1475,46 @@
             setTimeout(() => t.classList.add("translate-y-20", "opacity-0"), 3200);
         }
 
+        // ==========================================
+        // SHARE POST FUNCTIONALITY (COPY + WHATSAPP)
+        // ==========================================
+        function getDirectJobUrl(jobId) {
+            const baseUrl = window.location.origin + window.location.pathname;
+            return `${baseUrl}#job-${encodeURIComponent(jobId)}`;
+        }
+
+        window.openShareModal = function(event, jobId) {
+            if (event) event.stopPropagation();
+            const job = jobs.find(j => j.id === jobId);
+            if (!job) return;
+
+            const directUrl = getDirectJobUrl(job.id);
+            document.getElementById("shareModalJobTitle").textContent = job.title;
+            document.getElementById("shareModalUrlInput").value = directUrl;
+
+            const waMessage = `*${job.title}* (${job.company})\nLocation: ${job.city ? job.city + ', ' : ''}${job.province || 'Pakistan'}\nLast Date: ${job.deadline || 'Check Details'}\n\nPoori tafseel aur apply link ke liye neeche click karein:\n${directUrl}`;
+            document.getElementById("shareModalWhatsappBtn").href = `https://api.whatsapp.com/send?text=${encodeURIComponent(waMessage)}`;
+
+            document.getElementById("sharePostModal").classList.remove("hidden");
+        };
+
+        window.closeShareModal = function() {
+            document.getElementById("sharePostModal").classList.add("hidden");
+        };
+
+        window.copyShareModalLink = async function() {
+            const input = document.getElementById("shareModalUrlInput");
+            if (!input || !input.value) return;
+            try {
+                await navigator.clipboard.writeText(input.value);
+                toast("Job link copied! Ab aap kahin bhi paste kar sakte hain.");
+            } catch {
+                input.select();
+                document.execCommand("copy");
+                toast("Job link copied!");
+            }
+        };
+
         // Category Filter
         window.setType = function(t) {
             activeType = t;
@@ -744,13 +1536,26 @@
             if (!isJobsLoaded) return;
 
             const q = document.getElementById("q").value.trim().toLowerCase();
-            const city = document.getElementById("city").value;
+            const citySelect = document.getElementById("city").value;
 
-            const list = jobs.filter(j =>
-                (!activeType || j.type === activeType) &&
-                (!q || [j.title, j.company, j.province, j.city, j.qualification, stripBoldMarkers(j.description)].join(" ").toLowerCase().includes(q)) &&
-                (!city || (j.province || "").toLowerCase() === city.toLowerCase() || j.province === "All Pakistan")
-            ).sort((a, b) => (b.created || 0) - (a.created || 0));
+            const list = jobs.filter(j => {
+                const matchesType = !activeType || j.type === activeType;
+                const matchesQuery = !q || [j.title, j.company, j.province, j.city, j.qualification, stripBoldMarkers(j.description)].join(" ").toLowerCase().includes(q);
+
+                let matchesLocation = true;
+                if (activeMapFilter) {
+                    if (!isJobActiveForMap(j)) return false;
+                    if (activeMapFilter.type === "city") {
+                        matchesLocation = (j.city || "").toLowerCase().includes(activeMapFilter.value.toLowerCase());
+                    } else if (activeMapFilter.type === "province") {
+                        matchesLocation = (j.province || "").toLowerCase() === activeMapFilter.value.toLowerCase() || j.province === "All Pakistan";
+                    }
+                } else if (citySelect) {
+                    matchesLocation = (j.province || "").toLowerCase() === citySelect.toLowerCase() || j.province === "All Pakistan";
+                }
+
+                return matchesType && matchesQuery && matchesLocation;
+            }).sort((a, b) => (b.created || 0) - (a.created || 0));
 
             document.getElementById("count").textContent = `${list.length} job ${list.length === 1 ? 'post' : 'posts'} found`;
             const feed = document.getElementById("feed");
@@ -772,6 +1577,10 @@
                 const badgeClass = isGov
                     ? "bg-emerald-50 text-emerald-700 border-emerald-200/80"
                     : "bg-blue-50 text-blue-700 border-blue-200/80";
+
+                const titleIsUrdu = containsUrdu(j.title);
+                const descPlain = stripBoldMarkers(j.description);
+                const descIsUrdu = containsUrdu(descPlain);
 
                 let mediaHtml = "";
                 if (j.image) {
@@ -801,28 +1610,34 @@
                             <div class="space-y-2">
                                 <div class="flex flex-wrap items-center gap-2 text-[11px] font-semibold">
                                     <span class="px-2.5 py-0.5 rounded-full border ${badgeClass} uppercase tracking-wide">${esc(j.type)}</span>
-                                    <span class="text-slate-500 truncate"><i class="fa-solid fa-location-dot text-slate-400 mr-1"></i>${esc(j.province || "Pakistan")}</span>
+                                    <span class="text-slate-500 truncate"><i class="fa-solid fa-location-dot text-slate-400 mr-1"></i>${esc(j.city ? j.city + ', ' : '')}${esc(j.province || "Pakistan")}</span>
                                 </div>
-                                <h3 class="font-display text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
+                                <h3 class="font-display text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug ${titleIsUrdu ? 'urdu-text text-xl' : ''}">
                                     ${esc(j.title)}
                                 </h3>
-                                <p class="text-xs font-semibold text-slate-600 truncate">
+                                <p class="text-xs font-semibold text-slate-600 truncate ${containsUrdu(j.company) ? 'urdu-inline' : ''}">
                                     <i class="fa-solid fa-building text-slate-400 mr-1.5"></i>${esc(j.company)}
                                 </p>
-                                <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">
-                                    ${esc(stripBoldMarkers(j.description))}
+                                <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed ${descIsUrdu ? 'urdu-text text-sm' : ''}">
+                                    ${esc(descPlain)}
                                 </p>
                             </div>
 
-                            <div class="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between gap-2">
+                            <div class="pt-3.5 mt-3.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
                                 <span class="text-xs font-bold text-slate-700">
                                     <i class="fa-regular fa-calendar text-blue-600 mr-1"></i>
                                     ${j.deadline ? esc(j.deadline) : "See Details"}
                                 </span>
-                                <span class="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 bg-blue-50 group-hover:bg-blue-600 group-hover:text-white px-3 py-1.5 rounded-xl transition-colors">
-                                    <span>View Full Page</span>
-                                    <i class="fa-solid fa-arrow-right text-[11px]"></i>
-                                </span>
+                                <div class="flex items-center gap-1.5">
+                                    <button type="button" onclick="openShareModal(event, '${esc(j.id)}')" title="Share Job Post" class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-600 hover:text-white px-3 py-1.5 rounded-xl transition-colors border border-emerald-200/70">
+                                        <i class="fa-solid fa-share-nodes text-[11px]"></i>
+                                        <span>Share</span>
+                                    </button>
+                                    <span class="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 bg-blue-50 group-hover:bg-blue-600 group-hover:text-white px-3 py-1.5 rounded-xl transition-colors">
+                                        <span>Open</span>
+                                        <i class="fa-solid fa-arrow-right text-[11px]"></i>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </article>`;
@@ -840,6 +1655,8 @@
             const badgeClass = isGov
                 ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                 : "bg-blue-50 text-blue-700 border-blue-200";
+
+            const titleIsUrdu = containsUrdu(j.title);
 
             document.getElementById("breadcrumbCategory").textContent = `${j.type} Job`;
 
@@ -862,16 +1679,22 @@
                 <div class="bg-white rounded-3xl border border-slate-200/90 shadow-xs p-6 sm:p-10 space-y-8">
                     <!-- Post Header -->
                     <div class="space-y-4 border-b border-slate-100 pb-6">
-                        <div class="flex flex-wrap items-center gap-2.5">
-                            <span class="px-3.5 py-1 rounded-full text-xs font-bold border ${badgeClass} uppercase tracking-wider">${esc(j.type)} Job</span>
-                            <span class="text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
-                                <i class="fa-regular fa-clock mr-1"></i>Posted ${new Date(j.created || Date.now()).toLocaleDateString('en-PK', { year: 'numeric', month: 'short', day: 'numeric' })}
-                            </span>
+                        <div class="flex flex-wrap items-center justify-between gap-2.5">
+                            <div class="flex flex-wrap items-center gap-2.5">
+                                <span class="px-3.5 py-1 rounded-full text-xs font-bold border ${badgeClass} uppercase tracking-wider">${esc(j.type)} Job</span>
+                                <span class="text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+                                    <i class="fa-regular fa-clock mr-1"></i>Posted ${new Date(j.created || Date.now()).toLocaleDateString('en-PK', { year: 'numeric', month: 'short', day: 'numeric' })}
+                                </span>
+                            </div>
+                            <button type="button" onclick="openShareModal(event, '${esc(j.id)}')" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-all">
+                                <i class="fa-brands fa-whatsapp text-sm"></i>
+                                <span>Share Post</span>
+                            </button>
                         </div>
-                        <h1 class="font-display text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                        <h1 class="font-display text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight ${titleIsUrdu ? 'urdu-text text-3xl sm:text-5xl' : ''}">
                             ${esc(j.title)}
                         </h1>
-                        <p class="text-base sm:text-lg font-bold text-blue-600 flex items-center gap-2">
+                        <p class="text-base sm:text-lg font-bold text-blue-600 flex items-center gap-2 ${containsUrdu(j.company) ? 'urdu-inline' : ''}">
                             <i class="fa-solid fa-building-columns"></i>
                             <span>${esc(j.company)}</span>
                         </p>
@@ -889,11 +1712,11 @@
                         </div>
                         <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/70">
                             <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Qualification Required</span>
-                            <strong class="text-sm font-bold text-slate-800 mt-1 block">${esc(j.qualification || "See Official Advertisement")}</strong>
+                            <strong class="text-sm font-bold text-slate-800 mt-1 block ${containsUrdu(j.qualification) ? 'urdu-text' : ''}">${esc(j.qualification || "See Official Advertisement")}</strong>
                         </div>
                         <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/70">
                             <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Salary / Pay Scale</span>
-                            <strong class="text-sm font-bold text-slate-800 mt-1 block">${esc(j.salary || "As per Employer Policy")}</strong>
+                            <strong class="text-sm font-bold text-slate-800 mt-1 block ${containsUrdu(j.salary) ? 'urdu-text' : ''}">${esc(j.salary || "As per Employer Policy")}</strong>
                         </div>
                         <div class="bg-rose-50/70 p-4 rounded-2xl border border-rose-200/80 sm:col-span-2 lg:col-span-2">
                             <span class="text-[11px] font-bold uppercase tracking-wider text-rose-500 block">Last Date to Apply</span>
@@ -904,10 +1727,10 @@
                     <!-- Official Newspaper / Poster Image or Video -->
                     ${bannerHtml}
 
-                    <!-- Detailed Job Description -->
+                    <!-- Detailed Job Description (Supports English & Noto Nastaliq Urdu) -->
                     <div class="space-y-3">
                         <h2 class="font-display text-xl font-extrabold text-slate-900">Complete Job Details & Instructions</h2>
-                        <div class="text-slate-700 text-sm sm:text-base leading-relaxed whitespace-pre-wrap bg-slate-50/60 p-5 sm:p-6 rounded-2xl border border-slate-200/60">${formatRichDescription(j.description)}</div>
+                        <div class="text-slate-700 text-sm sm:text-base leading-relaxed bg-slate-50/60 p-5 sm:p-6 rounded-2xl border border-slate-200/60 space-y-1.5">${formatRichDescription(j.description)}</div>
                     </div>
 
                     <!-- Official Apply Call-to-Action Box -->
@@ -917,10 +1740,16 @@
                             <h3 class="font-display text-xl sm:text-2xl font-extrabold">Ready to submit your application?</h3>
                             <p class="text-xs sm:text-sm text-slate-300 break-all">${esc(j.apply)}</p>
                         </div>
-                        <a href="${esc(j.apply)}" target="_blank" rel="noopener noreferrer" class="w-full md:w-auto inline-flex items-center justify-center gap-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold px-7 py-4 rounded-2xl shadow-lg shadow-blue-600/30 transition-all text-sm shrink-0">
-                            <span>Apply on Official Website</span>
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                        </a>
+                        <div class="w-full md:w-auto flex flex-col sm:flex-row gap-3 shrink-0">
+                            <button type="button" onclick="openShareModal(event, '${esc(j.id)}')" class="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-4 rounded-2xl transition-all text-sm">
+                                <i class="fa-brands fa-whatsapp text-lg"></i>
+                                <span>Share Job</span>
+                            </button>
+                            <a href="${esc(j.apply)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold px-7 py-4 rounded-2xl shadow-lg shadow-blue-600/30 transition-all text-sm">
+                                <span>Apply on Official Website</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </a>
+                        </div>
                     </div>
 
                     <!-- Safety Notice -->
@@ -1035,7 +1864,6 @@
                 uploadedMediaUrl = result.secure_url;
                 uploadedMediaType = result.resource_type === "video" ? "video" : "image";
 
-                // Sync the URL input field with the returned Cloudinary URL
                 document.getElementById("imageUrlInput").value = uploadedMediaUrl;
 
                 if (uploadedMediaType === "video") {
@@ -1110,6 +1938,7 @@
         window.closeAdminDashboard = function() {
             document.getElementById("adminDashboardView").classList.add("hidden");
             render();
+            renderPakistanJobsMap();
         };
 
         window.logoutAdmin = function() {
@@ -1129,6 +1958,7 @@
             }
             document.getElementById("aPosts").classList.toggle("hidden", t !== "posts");
             document.getElementById("aAdd").classList.toggle("hidden", t !== "add");
+            document.getElementById("aBanner").classList.toggle("hidden", t !== "banner");
             if (t === "add" && !document.querySelector('[name="id"]').value) {
                 document.getElementById("formHeading").textContent = "Publish a New Job";
             }
@@ -1143,7 +1973,7 @@
             document.getElementById("rows").innerHTML = sortedJobs.length ? sortedJobs.map(j => `
                 <tr class="hover:bg-slate-50/80 transition-colors">
                     <td class="py-4 px-5">
-                        <div class="font-bold text-slate-900">${esc(j.title)}</div>
+                        <div class="font-bold text-slate-900 ${containsUrdu(j.title) ? 'urdu-inline' : ''}">${esc(j.title)}</div>
                         <div class="text-xs text-slate-500">${esc(j.company)}</div>
                     </td>
                     <td class="py-4 px-5">
@@ -1164,7 +1994,9 @@
         }
 
         window.resetJobForm = function() {
-            document.getElementById("jobForm").reset();
+            const form = document.getElementById("jobForm");
+            form.reset();
+            form.querySelectorAll("input, textarea").forEach(el => el.classList.remove("urdu-text"));
             document.querySelector('[name="id"]').value = "";
             uploadedMediaUrl = "";
             uploadedMediaType = "image";
@@ -1193,7 +2025,10 @@
             if (!j) return;
             const form = document.getElementById("jobForm");
             Object.keys(j).forEach(k => {
-                if (form.elements[k]) form.elements[k].value = j[k] || "";
+                if (form.elements[k]) {
+                    form.elements[k].value = j[k] || "";
+                    applyAutoUrduDirection(form.elements[k]);
+                }
             });
             form.elements["imageUrl"].value = j.image || "";
             uploadedMediaUrl = j.image || "";
@@ -1282,7 +2117,6 @@
                     updatedAt: Date.now()
                 };
 
-                // Save job text details + Cloudinary media URL to Cloud Firestore
                 await setDoc(doc(jobsCollectionRef, jobId), post);
 
                 resetJobForm();
