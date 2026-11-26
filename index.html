@@ -63,11 +63,11 @@
             transform-origin: 50% 50%;
         }
 
-        /* Pakistan Map Blinking Dots Animations */
+        /* Pakistan Map Blinking Dots & Province Hover Animations */
         @keyframes pulseRingBig {
             0% { transform: scale(0.85); opacity: 0.9; }
-            70% { transform: scale(2.35); opacity: 0; }
-            100% { transform: scale(2.35); opacity: 0; }
+            70% { transform: scale(2.4); opacity: 0; }
+            100% { transform: scale(2.4); opacity: 0; }
         }
         @keyframes pulseRingSmall {
             0% { transform: scale(0.8); opacity: 0.95; }
@@ -75,7 +75,12 @@
             100% { transform: scale(2.15); opacity: 0; }
         }
         .map-dot-group { cursor: pointer; }
-        .map-dot-group:hover .map-dot-label { opacity: 1; }
+        .map-dot-group:hover .map-dot-core { transform: scale(1.25); }
+        .map-dot-core {
+            transform-box: fill-box;
+            transform-origin: center;
+            transition: transform 0.2s ease;
+        }
         .pulse-ring-big {
             transform-box: fill-box;
             transform-origin: center;
@@ -87,11 +92,13 @@
             animation: pulseRingSmall 1.5s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
         }
         .province-shape {
-            transition: fill 0.25s ease, stroke 0.25s ease;
+            transition: fill 0.25s ease, stroke 0.25s ease, filter 0.25s ease;
             cursor: pointer;
         }
         .province-shape:hover {
-            fill: #dbeafe;
+            fill: #1d4ed8;
+            stroke: #93c5fd;
+            filter: brightness(1.12);
         }
     </style>
 </head>
@@ -253,7 +260,7 @@
             <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
                 <div>
                     <h2 id="feedTitle" class="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Latest Job Updates</h2>
-                    <p class="text-sm text-slate-500 mt-1">Click any job card to open its full page, or use the Share button to send directly on WhatsApp.</p>
+                    <p class="text-sm text-slate-500 mt-1">Featured jobs hamesha sab se upar show hoti hain. Kisi bhi card par click karke mukammal details dekhein.</p>
                 </div>
             </div>
 
@@ -278,51 +285,61 @@
             </div>
 
             <!-- ========================================== -->
-            <!-- INTERACTIVE PAKISTAN LIVE JOBS MAP         -->
+            <!-- IMPROVED INTERACTIVE PAKISTAN LIVE JOBS MAP-->
             <!-- ========================================== -->
             <section id="pakistanMapSection" class="bg-white rounded-3xl border border-slate-200/90 shadow-xs p-6 sm:p-8 lg:p-10 mt-10">
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-100 pb-6 mb-6">
                     <div>
                         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold mb-2">
                             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-                            <span>Real-Time Active Jobs Radar</span>
+                            <span>Real-Time Geographic Jobs Radar</span>
                         </div>
                         <h2 class="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Pakistan Live Jobs Map</h2>
                         <p class="text-xs sm:text-sm text-slate-500 mt-1">
-                            Jin provinces aur cities mein active jobs hain wahan dots blink kar rahe hain. Kisi bhi dot par click karein to us shehar ya province ki jobs khul jayengi. Last date guzarne par dot khud-ba-khud hat jata hai.
+                            Province ya shehar par click karke active vacancies dekhein. Expired jobs map se automatic hat jati hain.
                         </p>
                     </div>
                     <div class="flex flex-wrap items-center gap-3 text-xs font-semibold bg-slate-50 px-4 py-3 rounded-2xl border border-slate-200/80">
                         <div class="flex items-center gap-2">
                             <span class="relative flex h-4 w-4 items-center justify-center">
                                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-600"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
                             </span>
-                            <span class="text-slate-700">Province Active Dot (Bara)</span>
+                            <span class="text-slate-700">Province Active</span>
                         </div>
                         <span class="text-slate-300">|</span>
                         <div class="flex items-center gap-2">
                             <span class="relative flex h-3 w-3 items-center justify-center">
                                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                             </span>
-                            <span class="text-slate-700">City Active Dot (Chota)</span>
+                            <span class="text-slate-700">City Active</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                    <!-- SVG Map of Pakistan -->
-                    <div class="lg:col-span-7 bg-gradient-to-b from-slate-900 via-slate-900 to-blue-950 rounded-3xl p-4 sm:p-6 relative overflow-hidden border border-slate-800 shadow-inner">
+                    <!-- Detailed Geographic SVG Map of Pakistan -->
+                    <div class="lg:col-span-7 bg-gradient-to-b from-[#071124] via-[#0c1b36] to-[#08152b] rounded-3xl p-4 sm:p-6 relative overflow-hidden border border-slate-800 shadow-inner">
                         <div class="flex items-center justify-between text-[11px] text-slate-400 mb-2 px-1">
-                            <span><i class="fa-solid fa-satellite-dish text-emerald-400 mr-1.5"></i>Active Vacancies Radar</span>
+                            <span><i class="fa-solid fa-compass text-sky-400 mr-1.5"></i>Islamic Republic of Pakistan • Live Radar</span>
                             <span id="mapActiveCountBadge" class="text-emerald-400 font-bold">0 Active Locations</span>
                         </div>
 
-                        <svg id="pakistanSvgMap" viewBox="0 0 600 540" class="w-full h-auto max-h-[470px] mx-auto select-none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Hover Tooltip inside Map -->
+                        <div id="mapHoverTooltip" class="hidden pointer-events-none absolute top-12 left-5 z-20 bg-slate-950/90 text-white border border-sky-400/40 backdrop-blur-md px-3.5 py-2 rounded-xl text-xs shadow-xl">
+                            <strong id="mapTooltipTitle" class="block text-sky-300 font-bold">Province</strong>
+                            <span id="mapTooltipSub" class="text-[11px] text-slate-300">Click to view jobs</span>
+                        </div>
+
+                        <svg id="pakistanSvgMap" viewBox="0 0 640 580" class="w-full h-auto max-h-[500px] mx-auto select-none" xmlns="http://www.w3.org/2000/svg">
                             <defs>
+                                <linearGradient id="seaGrad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.06"/>
+                                    <stop offset="100%" stop-color="#0284c7" stop-opacity="0.24"/>
+                                </linearGradient>
                                 <filter id="glowBlue" x="-50%" y="-50%" width="200%" height="200%">
-                                    <feGaussianBlur stdDeviation="3" result="blur"/>
+                                    <feGaussianBlur stdDeviation="3.5" result="blur"/>
                                     <feMerge>
                                         <feMergeNode in="blur"/>
                                         <feMergeNode in="SourceGraphic"/>
@@ -337,46 +354,72 @@
                                 </filter>
                             </defs>
 
-                            <!-- Subtle Grid Background -->
-                            <g stroke="#1e293b" stroke-width="1" opacity="0.6">
-                                <line x1="0" y1="100" x2="600" y2="100"/><line x1="0" y1="200" x2="600" y2="200"/>
-                                <line x1="0" y1="300" x2="600" y2="300"/><line x1="0" y1="400" x2="600" y2="400"/>
-                                <line x1="120" y1="0" x2="120" y2="540"/><line x1="240" y1="0" x2="240" y2="540"/>
-                                <line x1="360" y1="0" x2="360" y2="540"/><line x1="480" y1="0" x2="480" y2="540"/>
+                            <!-- Latitude / Longitude Grid -->
+                            <g stroke="#1e293b" stroke-width="0.9" stroke-dasharray="3,3" opacity="0.7">
+                                <line x1="20" y1="110" x2="620" y2="110"/>
+                                <line x1="20" y1="220" x2="620" y2="220"/>
+                                <line x1="20" y1="330" x2="620" y2="330"/>
+                                <line x1="20" y1="440" x2="620" y2="440"/>
+                                <line x1="130" y1="20" x2="130" y2="560"/>
+                                <line x1="260" y1="20" x2="260" y2="560"/>
+                                <line x1="390" y1="20" x2="390" y2="560"/>
+                                <line x1="520" y1="20" x2="520" y2="560"/>
                             </g>
 
-                            <!-- 1. Gilgit-Baltistan -->
-                            <path onclick="filterByMapLocation('Gilgit-Baltistan', 'province')" class="province-shape" fill="#1e3a5f" stroke="#38bdf8" stroke-width="1.5"
-                                d="M 380,32 L 445,25 L 510,55 L 535,95 L 485,125 L 430,118 L 385,92 L 368,60 Z" />
-                            <text x="448" y="72" fill="#94a3b8" font-size="10" font-weight="700" text-anchor="middle" pointer-events="none">GILGIT-BALTISTAN</text>
+                            <!-- Arabian Sea Zone (South) -->
+                            <path d="M 35,485 Q 160,475 268,512 L 320,565 L 35,565 Z" fill="url(#seaGrad)" />
+                            <text x="155" y="536" fill="#38bdf8" opacity="0.55" font-size="11" font-weight="700" letter-spacing="3" text-anchor="middle">ARABIAN SEA</text>
+
+                            <!-- Neighboring Country Labels (Subtle Context) -->
+                            <text x="135" y="165" fill="#475569" font-size="10" font-weight="700" letter-spacing="2" text-anchor="middle">AFGHANISTAN</text>
+                            <text x="48" y="310" fill="#475569" font-size="10" font-weight="700" letter-spacing="2" text-anchor="middle" transform="rotate(-90 48 310)">IRAN</text>
+                            <text x="530" y="340" fill="#475569" font-size="11" font-weight="700" letter-spacing="3" text-anchor="middle">INDIA</text>
+                            <text x="535" y="42" fill="#475569" font-size="10" font-weight="700" letter-spacing="2" text-anchor="middle">CHINA</text>
+
+                            <!-- 1. Gilgit-Baltistan (Detailed Karakoram / Northern Contour) -->
+                            <path onmouseenter="showMapTooltip('Gilgit-Baltistan')" onmouseleave="hideMapTooltip()" onclick="filterByMapLocation('Gilgit-Baltistan', 'province')" class="province-shape" fill="#173254" stroke="#38bdf8" stroke-width="1.5" stroke-linejoin="round"
+                                d="M 392,46 L 418,32 L 452,30 L 488,48 L 538,56 L 572,82 L 548,108 L 512,126 L 468,128 L 434,114 L 404,95 L 386,70 Z" />
+                            <text x="478" y="76" fill="#94a3b8" font-size="10" font-weight="800" text-anchor="middle" pointer-events="none">GILGIT-BALTISTAN</text>
 
                             <!-- 2. Azad Jammu & Kashmir (AJK) -->
-                            <path onclick="filterByMapLocation('Azad Jammu & Kashmir', 'province')" class="province-shape" fill="#1e3a5f" stroke="#38bdf8" stroke-width="1.5"
-                                d="M 385,92 L 430,118 L 445,152 L 415,172 L 392,150 L 380,118 Z" />
-                            <text x="424" y="138" fill="#94a3b8" font-size="9" font-weight="700" text-anchor="middle" pointer-events="none">AJK</text>
+                            <path onmouseenter="showMapTooltip('Azad Jammu & Kashmir')" onmouseleave="hideMapTooltip()" onclick="filterByMapLocation('Azad Jammu & Kashmir', 'province')" class="province-shape" fill="#1c3d66" stroke="#38bdf8" stroke-width="1.5" stroke-linejoin="round"
+                                d="M 404,95 L 434,114 L 468,128 L 462,158 L 444,182 L 424,184 L 414,162 L 402,135 L 398,112 Z" />
+                            <text x="436" y="144" fill="#cbd5e1" font-size="9.5" font-weight="800" text-anchor="middle" pointer-events="none">AJK</text>
 
-                            <!-- 3. Khyber Pakhtunkhwa (KPK) -->
-                            <path onclick="filterByMapLocation('Khyber Pakhtunkhwa', 'province')" class="province-shape" fill="#1e3a5f" stroke="#38bdf8" stroke-width="1.5"
-                                d="M 315,75 L 368,60 L 385,92 L 380,118 L 392,150 L 365,175 L 335,215 L 295,225 L 278,195 L 292,155 L 278,125 L 302,95 Z" />
-                            <text x="332" y="145" fill="#94a3b8" font-size="10" font-weight="700" text-anchor="middle" pointer-events="none">KPK</text>
+                            <!-- 3. Khyber Pakhtunkhwa (KPK - Including Chitral & Merged Districts) -->
+                            <path onmouseenter="showMapTooltip('Khyber Pakhtunkhwa')" onmouseleave="hideMapTooltip()" onclick="filterByMapLocation('Khyber Pakhtunkhwa', 'province')" class="province-shape" fill="#152e4d" stroke="#38bdf8" stroke-width="1.5" stroke-linejoin="round"
+                                d="M 342,56 L 372,42 L 392,46 L 386,70 L 404,95 L 398,112 L 402,135 L 386,154 L 368,168 L 352,192 L 336,225 L 308,236 L 292,216 L 284,188 L 304,166 L 294,145 L 315,126 L 328,96 Z" />
+                            <text x="348" y="138" fill="#cbd5e1" font-size="11" font-weight="800" text-anchor="middle" pointer-events="none">KPK</text>
 
-                            <!-- 4. Islamabad Capital Territory (ICT) -->
-                            <circle onclick="filterByMapLocation('Islamabad Capital Territory', 'province')" class="province-shape" cx="378" cy="158" r="11" fill="#2563eb" stroke="#93c5fd" stroke-width="1.5" />
+                            <!-- 4. Punjab (Detailed Five-Rivers & Cholistan Shape) -->
+                            <path onmouseenter="showMapTooltip('Punjab')" onmouseleave="hideMapTooltip()" onclick="filterByMapLocation('Punjab', 'province')" class="province-shape" fill="#19375c" stroke="#38bdf8" stroke-width="1.5" stroke-linejoin="round"
+                                d="M 386,154 L 402,135 L 414,162 L 424,184 L 456,192 L 484,212 L 496,238 L 468,268 L 446,304 L 418,342 L 384,368 L 354,362 L 332,340 L 314,306 L 308,236 L 336,225 L 352,192 L 368,168 Z" />
+                            <text x="404" y="256" fill="#e2e8f0" font-size="13" font-weight="800" letter-spacing="1" text-anchor="middle" pointer-events="none">PUNJAB</text>
 
-                            <!-- 5. Punjab -->
-                            <path onclick="filterByMapLocation('Punjab', 'province')" class="province-shape" fill="#1e3a5f" stroke="#38bdf8" stroke-width="1.5"
-                                d="M 365,175 L 392,150 L 415,172 L 455,185 L 478,225 L 448,275 L 415,325 L 365,355 L 315,335 L 295,285 L 295,225 L 335,215 Z" />
-                            <text x="385" y="255" fill="#cbd5e1" font-size="13" font-weight="800" text-anchor="middle" pointer-events="none">PUNJAB</text>
+                            <!-- 5. Balochistan (Detailed Makran Coast & Chagai Bulge) -->
+                            <path onmouseenter="showMapTooltip('Balochistan')" onmouseleave="hideMapTooltip()" onclick="filterByMapLocation('Balochistan', 'province')" class="province-shape" fill="#132a47" stroke="#38bdf8" stroke-width="1.5" stroke-linejoin="round"
+                                d="M 292,216 L 308,236 L 314,306 L 332,340 L 302,368 L 282,405 L 274,448 L 266,482 L 222,478 L 165,472 L 104,474 L 58,476 L 52,422 L 68,376 L 56,342 L 118,328 L 178,308 L 214,264 L 254,234 Z" />
+                            <text x="195" y="376" fill="#e2e8f0" font-size="13" font-weight="800" letter-spacing="1" text-anchor="middle" pointer-events="none">BALOCHISTAN</text>
 
-                            <!-- 6. Balochistan -->
-                            <path onclick="filterByMapLocation('Balochistan', 'province')" class="province-shape" fill="#1e3a5f" stroke="#38bdf8" stroke-width="1.5"
-                                d="M 278,195 L 295,225 L 295,285 L 315,335 L 275,375 L 258,425 L 225,465 L 135,468 L 65,452 L 58,385 L 88,335 L 145,315 L 195,265 L 238,215 Z" />
-                            <text x="195" y="365" fill="#cbd5e1" font-size="13" font-weight="800" text-anchor="middle" pointer-events="none">BALOCHISTAN</text>
+                            <!-- 6. Sindh (Indus Delta, Thar Desert & Karachi Coast) -->
+                            <path onmouseenter="showMapTooltip('Sindh')" onmouseleave="hideMapTooltip()" onclick="filterByMapLocation('Sindh', 'province')" class="province-shape" fill="#183559" stroke="#38bdf8" stroke-width="1.5" stroke-linejoin="round"
+                                d="M 332,340 L 354,362 L 384,368 L 398,415 L 394,468 L 372,504 L 332,516 L 296,514 L 274,496 L 266,482 L 274,448 L 282,405 L 302,368 Z" />
+                            <text x="342" y="438" fill="#e2e8f0" font-size="13" font-weight="800" letter-spacing="1" text-anchor="middle" pointer-events="none">SINDH</text>
 
-                            <!-- 7. Sindh -->
-                            <path onclick="filterByMapLocation('Sindh', 'province')" class="province-shape" fill="#1e3a5f" stroke="#38bdf8" stroke-width="1.5"
-                                d="M 315,335 L 365,355 L 378,415 L 365,478 L 312,495 L 265,488 L 245,465 L 258,425 L 275,375 Z" />
-                            <text x="318" y="425" fill="#cbd5e1" font-size="13" font-weight="800" text-anchor="middle" pointer-events="none">SINDH</text>
+                            <!-- 7. Islamabad Capital Territory (ICT) -->
+                            <circle onmouseenter="showMapTooltip('Islamabad Capital Territory')" onmouseleave="hideMapTooltip()" onclick="filterByMapLocation('Islamabad Capital Territory', 'province')" class="province-shape" cx="395" cy="162" r="9.5" fill="#2563eb" stroke="#bfdbfe" stroke-width="1.8" />
+
+                            <!-- Indus River Path (Subtle Geographic Water Line) -->
+                            <path d="M 455,65 Q 410,95 375,148 Q 345,205 330,275 Q 315,345 312,415 Q 305,465 288,505"
+                                fill="none" stroke="#38bdf8" stroke-width="1.4" stroke-opacity="0.32" stroke-linecap="round" pointer-events="none" />
+
+                            <!-- Compass Rose (Top Left) -->
+                            <g transform="translate(56, 56)" opacity="0.75" pointer-events="none">
+                                <circle cx="0" cy="0" r="18" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+                                <polygon points="0,-13 3,-3 0,-5 -3,-3" fill="#38bdf8"/>
+                                <polygon points="0,13 3,3 0,5 -3,3" fill="#64748b"/>
+                                <text x="0" y="-21" fill="#94a3b8" font-size="8" font-weight="800" text-anchor="middle">N</text>
+                            </g>
 
                             <!-- Dynamic Blinking Dots Layer (Rendered by JS based on active non-expired jobs) -->
                             <g id="mapDynamicDotsLayer"></g>
@@ -393,7 +436,7 @@
                             <p class="text-xs text-slate-500 mt-1 mb-4">
                                 Sirf wohi jobs map par show hoti hain jin ki last date abhi baqi hai.
                             </p>
-                            <div id="mapLocationChips" class="space-y-2.5 max-h-[340px] overflow-y-auto custom-scrollbar pr-1">
+                            <div id="mapLocationChips" class="space-y-2.5 max-h-[370px] overflow-y-auto custom-scrollbar pr-1">
                                 <!-- Populated via JS -->
                             </div>
                         </div>
@@ -456,7 +499,7 @@
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
             <!-- Stats Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
                     <div>
                         <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Published</span>
@@ -464,6 +507,15 @@
                     </div>
                     <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
                         <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Featured Pinned</span>
+                        <strong id="featuredTotal" class="block font-display text-3xl font-extrabold text-amber-600 mt-1">0</strong>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-star"></i>
                     </div>
                 </div>
                 <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
@@ -477,19 +529,10 @@
                 </div>
                 <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
                     <div>
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Private Sector</span>
-                        <strong id="privTotal" class="block font-display text-3xl font-extrabold text-indigo-600 mt-1">0</strong>
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Banner Clicks</span>
+                        <strong id="bannerStatClicks" class="block font-display text-3xl font-extrabold text-indigo-600 mt-1">0</strong>
                     </div>
                     <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-briefcase"></i>
-                    </div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
-                    <div>
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Banner Clicks</span>
-                        <strong id="bannerStatClicks" class="block font-display text-3xl font-extrabold text-amber-600 mt-1">0</strong>
-                    </div>
-                    <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
                         <i class="fa-solid fa-arrow-pointer"></i>
                     </div>
                 </div>
@@ -519,18 +562,18 @@
                         <div class="p-5 sm:p-6 border-b border-slate-100 flex flex-wrap justify-between items-center gap-3">
                             <div>
                                 <h2 class="font-display text-xl font-bold text-slate-900">Manage Job Posts</h2>
-                                <p class="text-xs text-slate-500">Edit, preview on full page, or remove active job advertisements.</p>
+                                <p class="text-xs text-slate-500">Kisi bhi job ko <strong>Feature</strong> karein to woh sab se upar show hogi jab tak aap Unfeature na karein.</p>
                             </div>
                             <button onclick="adminTab('add', document.querySelectorAll('.sidebtn')[1]); resetJobForm();" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm transition-all">
                                 <i class="fa-solid fa-plus mr-1"></i> Add Job
                             </button>
                         </div>
                         <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse min-w-[600px]">
+                            <table class="w-full text-left border-collapse min-w-[680px]">
                                 <thead>
                                     <tr class="bg-slate-50/80 text-slate-400 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200/80">
                                         <th class="py-3.5 px-5">Job Title & Department</th>
-                                        <th class="py-3.5 px-5">Category</th>
+                                        <th class="py-3.5 px-5">Category & Status</th>
                                         <th class="py-3.5 px-5">Location</th>
                                         <th class="py-3.5 px-5 text-right">Actions</th>
                                     </tr>
@@ -588,13 +631,30 @@
                                     <input name="qualification" oninput="applyAutoUrduDirection(this)" placeholder="e.g. Matric, Intermediate, Bachelor, Master" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:bg-white focus:border-blue-600 focus:outline-none">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Last Date to Apply (Map Expiry)</label>
+                                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Last Date to Apply (Expiry Badge & Map)</label>
                                     <input name="deadline" type="date" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:bg-white focus:border-blue-600 focus:outline-none">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Salary / Pay Scale</label>
                                     <input name="salary" oninput="applyAutoUrduDirection(this)" placeholder="e.g. BPS-14 / Rs. 55,000" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium focus:bg-white focus:border-blue-600 focus:outline-none">
                                 </div>
+                            </div>
+
+                            <!-- Pin / Feature Toggle in Form -->
+                            <div class="flex items-center justify-between bg-amber-50/70 p-4 rounded-2xl border border-amber-200/80">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center text-base shrink-0">
+                                        <i class="fa-solid fa-star"></i>
+                                    </div>
+                                    <div>
+                                        <span class="font-bold text-sm text-slate-900 block">Feature This Job at Top</span>
+                                        <span class="text-xs text-slate-600">On rakhne par yeh job website par sab se upar pin rahegi jab tak aap Unfeature na karein.</span>
+                                    </div>
+                                </div>
+                                <label class="inline-flex items-center cursor-pointer shrink-0">
+                                    <input type="checkbox" name="featured" id="jobFeaturedCheckbox" class="sr-only peer">
+                                    <div class="relative w-12 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                                </label>
                             </div>
 
                             <div>
@@ -878,64 +938,106 @@
         };
 
         // ==========================================
+        // SMART EXPIRY STATUS HELPER
+        // ==========================================
+        function getJobExpiryStatus(deadlineStr) {
+            if (!deadlineStr) {
+                return { status: "open", badgeHtml: "" };
+            }
+            const parts = String(deadlineStr).split("-");
+            if (parts.length !== 3) {
+                return { status: "open", badgeHtml: "" };
+            }
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const deadlineDate = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+            deadlineDate.setHours(0, 0, 0, 0);
+
+            const diffMs = deadlineDate.getTime() - today.getTime();
+            const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+            if (diffDays < 0) {
+                return {
+                    status: "expired",
+                    badgeHtml: `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-[10px] font-extrabold uppercase tracking-wide"><i class="fa-solid fa-circle-xmark"></i> Expired</span>`
+                };
+            }
+            if (diffDays <= 3) {
+                const label = diffDays === 0 ? "Last Day Today" : diffDays === 1 ? "Expiring Tomorrow" : `Expiring in ${diffDays}d`;
+                return {
+                    status: "expiring_soon",
+                    badgeHtml: `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-300 text-[10px] font-extrabold uppercase tracking-wide animate-pulse"><i class="fa-solid fa-hourglass-half"></i> ${label}</span>`
+                };
+            }
+            return { status: "active", badgeHtml: "" };
+        }
+
+        // ==========================================
         // PAKISTAN MAP COORDINATES & EXPIRY LOGIC
         // ==========================================
         const PROVINCE_COORDS = {
-            "Punjab": { x: 385, y: 245, label: "Punjab" },
-            "Sindh": { x: 318, y: 412, label: "Sindh" },
-            "Khyber Pakhtunkhwa": { x: 332, y: 138, label: "KPK" },
-            "Balochistan": { x: 195, y: 350, label: "Balochistan" },
-            "Islamabad Capital Territory": { x: 378, y: 158, label: "Islamabad" },
-            "Gilgit-Baltistan": { x: 448, y: 68, label: "Gilgit-Baltistan" },
-            "Azad Jammu & Kashmir": { x: 422, y: 135, label: "AJK" }
+            "Punjab": { x: 404, y: 242, label: "Punjab" },
+            "Sindh": { x: 342, y: 422, label: "Sindh" },
+            "Khyber Pakhtunkhwa": { x: 346, y: 124, label: "KPK" },
+            "Balochistan": { x: 195, y: 360, label: "Balochistan" },
+            "Islamabad Capital Territory": { x: 395, y: 162, label: "Islamabad" },
+            "Gilgit-Baltistan": { x: 478, y: 66, label: "Gilgit-Baltistan" },
+            "Azad Jammu & Kashmir": { x: 436, y: 132, label: "AJK" }
         };
 
         const CITY_COORDS = {
-            "lahore": { x: 432, y: 218, province: "Punjab", label: "Lahore" },
-            "multan": { x: 352, y: 295, province: "Punjab", label: "Multan" },
-            "rawalpindi": { x: 382, y: 168, province: "Punjab", label: "Rawalpindi" },
-            "faisalabad": { x: 392, y: 228, province: "Punjab", label: "Faisalabad" },
-            "gujranwala": { x: 415, y: 196, province: "Punjab", label: "Gujranwala" },
-            "sialkot": { x: 428, y: 185, province: "Punjab", label: "Sialkot" },
-            "sahiwal": { x: 392, y: 262, province: "Punjab", label: "Sahiwal" },
-            "bahawalpur": { x: 355, y: 332, province: "Punjab", label: "Bahawalpur" },
-            "sargodha": { x: 372, y: 205, province: "Punjab", label: "Sargodha" },
-            "rahim yar khan": { x: 325, y: 342, province: "Punjab", label: "Rahim Yar Khan" },
-            "dera ghazi khan": { x: 320, y: 292, province: "Punjab", label: "D.G. Khan" },
-            "karachi": { x: 268, y: 476, province: "Sindh", label: "Karachi" },
-            "hyderabad": { x: 298, y: 455, province: "Sindh", label: "Hyderabad" },
-            "sukkur": { x: 332, y: 368, province: "Sindh", label: "Sukkur" },
-            "larkana": { x: 312, y: 382, province: "Sindh", label: "Larkana" },
-            "nawabshah": { x: 316, y: 426, province: "Sindh", label: "Nawabshah" },
-            "mirpurkhas": { x: 334, y: 452, province: "Sindh", label: "Mirpurkhas" },
-            "peshawar": { x: 328, y: 148, province: "Khyber Pakhtunkhwa", label: "Peshawar" },
-            "mardan": { x: 342, y: 140, province: "Khyber Pakhtunkhwa", label: "Mardan" },
-            "abbottabad": { x: 372, y: 132, province: "Khyber Pakhtunkhwa", label: "Abbottabad" },
-            "swat": { x: 356, y: 105, province: "Khyber Pakhtunkhwa", label: "Swat" },
-            "kohat": { x: 324, y: 165, province: "Khyber Pakhtunkhwa", label: "Kohat" },
-            "dera ismail khan": { x: 312, y: 222, province: "Khyber Pakhtunkhwa", label: "D.I. Khan" },
-            "quetta": { x: 232, y: 255, province: "Balochistan", label: "Quetta" },
-            "gwadar": { x: 95, y: 448, province: "Balochistan", label: "Gwadar" },
-            "turbat": { x: 128, y: 432, province: "Balochistan", label: "Turbat" },
-            "khuzdar": { x: 228, y: 355, province: "Balochistan", label: "Khuzdar" },
-            "sibi": { x: 262, y: 282, province: "Balochistan", label: "Sibi" },
-            "islamabad": { x: 378, y: 158, province: "Islamabad Capital Territory", label: "Islamabad" },
-            "gilgit": { x: 438, y: 65, province: "Gilgit-Baltistan", label: "Gilgit" },
-            "skardu": { x: 478, y: 78, province: "Gilgit-Baltistan", label: "Skardu" },
-            "muzaffarabad": { x: 405, y: 128, province: "Azad Jammu & Kashmir", label: "Muzaffarabad" },
-            "mirpur": { x: 412, y: 164, province: "Azad Jammu & Kashmir", label: "Mirpur" }
+            "lahore": { x: 462, y: 214, province: "Punjab", label: "Lahore" },
+            "multan": { x: 356, y: 306, province: "Punjab", label: "Multan" },
+            "rawalpindi": { x: 399, y: 174, province: "Punjab", label: "Rawalpindi" },
+            "faisalabad": { x: 414, y: 228, province: "Punjab", label: "Faisalabad" },
+            "gujranwala": { x: 438, y: 194, province: "Punjab", label: "Gujranwala" },
+            "sialkot": { x: 454, y: 184, province: "Punjab", label: "Sialkot" },
+            "sahiwal": { x: 412, y: 266, province: "Punjab", label: "Sahiwal" },
+            "bahawalpur": { x: 366, y: 342, province: "Punjab", label: "Bahawalpur" },
+            "sargodha": { x: 390, y: 204, province: "Punjab", label: "Sargodha" },
+            "rahim yar khan": { x: 336, y: 354, province: "Punjab", label: "Rahim Yar Khan" },
+            "dera ghazi khan": { x: 326, y: 304, province: "Punjab", label: "D.G. Khan" },
+            "karachi": { x: 282, y: 492, province: "Sindh", label: "Karachi" },
+            "hyderabad": { x: 316, y: 472, province: "Sindh", label: "Hyderabad" },
+            "sukkur": { x: 352, y: 378, province: "Sindh", label: "Sukkur" },
+            "larkana": { x: 326, y: 392, province: "Sindh", label: "Larkana" },
+            "nawabshah": { x: 334, y: 442, province: "Sindh", label: "Nawabshah" },
+            "mirpurkhas": { x: 354, y: 468, province: "Sindh", label: "Mirpurkhas" },
+            "peshawar": { x: 344, y: 148, province: "Khyber Pakhtunkhwa", label: "Peshawar" },
+            "mardan": { x: 362, y: 140, province: "Khyber Pakhtunkhwa", label: "Mardan" },
+            "abbottabad": { x: 394, y: 132, province: "Khyber Pakhtunkhwa", label: "Abbottabad" },
+            "swat": { x: 374, y: 102, province: "Khyber Pakhtunkhwa", label: "Swat" },
+            "kohat": { x: 338, y: 168, province: "Khyber Pakhtunkhwa", label: "Kohat" },
+            "dera ismail khan": { x: 318, y: 224, province: "Khyber Pakhtunkhwa", label: "D.I. Khan" },
+            "quetta": { x: 248, y: 266, province: "Balochistan", label: "Quetta" },
+            "gwadar": { x: 96, y: 466, province: "Balochistan", label: "Gwadar" },
+            "turbat": { x: 132, y: 446, province: "Balochistan", label: "Turbat" },
+            "khuzdar": { x: 246, y: 368, province: "Balochistan", label: "Khuzdar" },
+            "sibi": { x: 280, y: 294, province: "Balochistan", label: "Sibi" },
+            "islamabad": { x: 395, y: 162, province: "Islamabad Capital Territory", label: "Islamabad" },
+            "gilgit": { x: 454, y: 66, province: "Gilgit-Baltistan", label: "Gilgit" },
+            "skardu": { x: 504, y: 80, province: "Gilgit-Baltistan", label: "Skardu" },
+            "muzaffarabad": { x: 422, y: 128, province: "Azad Jammu & Kashmir", label: "Muzaffarabad" },
+            "mirpur": { x: 430, y: 168, province: "Azad Jammu & Kashmir", label: "Mirpur" }
+        };
+
+        window.showMapTooltip = function(title) {
+            const tip = document.getElementById("mapHoverTooltip");
+            const tTitle = document.getElementById("mapTooltipTitle");
+            if (!tip || !tTitle) return;
+            tTitle.textContent = title;
+            tip.classList.remove("hidden");
+        };
+
+        window.hideMapTooltip = function() {
+            document.getElementById("mapHoverTooltip")?.classList.add("hidden");
         };
 
         // Check if a job's deadline has NOT passed yet
         function isJobActiveForMap(job) {
-            if (!job || !job.deadline) return true; // If no deadline date set, treat as active
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const parts = String(job.deadline).split("-");
-            if (parts.length !== 3) return true;
-            const deadlineDate = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
-            deadlineDate.setHours(23, 59, 59, 999);
-            return deadlineDate >= today;
+            return getJobExpiryStatus(job?.deadline).status !== "expired";
         }
 
         function renderPakistanJobsMap() {
@@ -958,7 +1060,6 @@
                     provinceCounts[prov] = (provinceCounts[prov] || 0) + 1;
                 }
 
-                // Parse comma-separated cities (e.g. "Multan, Lahore")
                 if (job.city) {
                     const rawCities = String(job.city).split(/[,/&]+/).map(c => c.trim()).filter(Boolean);
                     rawCities.forEach(cName => {
@@ -974,7 +1075,6 @@
                                 };
                             }
                             cityCounts[key].count += 1;
-                            // Ensure the city's parent province also lights up if not already counted
                             if (!prov || prov === "All Pakistan") return;
                             if (!provinceCounts[matchedCity.province]) {
                                 provinceCounts[matchedCity.province] = 1;
@@ -995,12 +1095,12 @@
                 svgMarkup += `
                     <g class="map-dot-group" onclick="filterByMapLocation('${esc(provName)}', 'province')">
                         <circle cx="${pt.x}" cy="${pt.y}" r="14" fill="#3b82f6" class="pulse-ring-big" />
-                        <circle cx="${pt.x}" cy="${pt.y}" r="7.5" fill="#2563eb" stroke="#ffffff" stroke-width="2" filter="url(#glowBlue)" />
+                        <circle cx="${pt.x}" cy="${pt.y}" r="7.5" fill="#2563eb" stroke="#ffffff" stroke-width="2" filter="url(#glowBlue)" class="map-dot-core" />
                         <text x="${pt.x}" y="${pt.y - 12}" fill="#93c5fd" font-size="10" font-weight="800" text-anchor="middle">${esc(pt.label)} (${count})</text>
                     </g>`;
             });
 
-            // 2. Render Smaller Blinking Dots for Active Cities (e.g., Multan, Lahore)
+            // 2. Render Smaller Blinking Dots for Active Cities
             Object.values(cityCounts).forEach(cityObj => {
                 if (cityObj.count <= 0) return;
                 totalActiveLocations++;
@@ -1008,7 +1108,7 @@
                 svgMarkup += `
                     <g class="map-dot-group" onclick="filterByMapLocation('${esc(cityObj.label)}', 'city')">
                         <circle cx="${x}" cy="${y}" r="9" fill="#10b981" class="pulse-ring-small" />
-                        <circle cx="${x}" cy="${y}" r="4.5" fill="#10b981" stroke="#ffffff" stroke-width="1.5" filter="url(#glowGreen)" />
+                        <circle cx="${x}" cy="${y}" r="4.5" fill="#10b981" stroke="#ffffff" stroke-width="1.5" filter="url(#glowGreen)" class="map-dot-core" />
                         <text x="${x}" y="${y + 13}" fill="#6ee7b7" font-size="9" font-weight="700" text-anchor="middle">${esc(cityObj.label)} (${cityObj.count})</text>
                     </g>`;
             });
@@ -1153,6 +1253,8 @@
                 description: "Federal Public Service Commission (FPSC) invites online applications from Pakistani citizens for multiple permanent vacancies across federal ministries and divisions.\n\n**اہم ہدایات برائے امیدواران:**\nامیدواروں کے پاس ایچ ای سی سے تسلیم شدہ یونیورسٹی کی ڈگری ہونا لازمی ہے۔ آن لائن درخواست دینے سے پہلے سرکاری اشتہار کو غور سے پڑھیں۔",
                 image: "https://placehold.co/900x450/0f172a/ffffff?text=FPSC+Federal+Government+Jobs+2026",
                 mediaType: "image",
+                featured: true,
+                featuredAt: Date.now(),
                 created: Date.now() - 3600000
             },
             {
@@ -1161,14 +1263,15 @@
                 company: "Meezan Bank Limited",
                 type: "Private",
                 province: "Punjab",
-                city: "Lahore, Multan",
+                city: "Lahore, Multan, Sahiwal",
                 qualification: "BBA / MBA / B.Com / BS Accounting & Finance",
-                deadline: "2026-12-15",
+                deadline: "2026-11-28",
                 salary: "Rs. 65,000 + Medical & Annual Bonus",
                 apply: "https://www.meezanbank.com/careers/",
-                description: "Meezan Bank, Pakistan's leading Islamic bank, is looking for fresh, energetic graduates for its Management Trainee Officer (MTO) batch across Punjab branches (Lahore & Multan).\n\n**Key Benefits:**\n• Fast-track career progression into Branch Operations & Relationship Management.\n• Comprehensive Islamic banking certification and classroom training.\n• Provident fund, health coverage, and performance bonuses.",
+                description: "Meezan Bank, Pakistan's leading Islamic bank, is looking for fresh, energetic graduates for its Management Trainee Officer (MTO) batch across Punjab branches.\n\n**Key Benefits:**\n• Fast-track career progression into Branch Operations & Relationship Management.\n• Comprehensive Islamic banking certification and classroom training.\n• Provident fund, health coverage, and performance bonuses.",
                 image: "https://placehold.co/900x450/1d4ed8/ffffff?text=Meezan+Bank+MTO+Careers+2026",
                 mediaType: "image",
+                featured: false,
                 created: Date.now() - 7200000
             }
         ];
@@ -1190,14 +1293,12 @@
             const deskImg = document.getElementById("promoBannerDesktopImg");
             const mobImg = document.getElementById("promoBannerMobileImg");
 
-            // Admin stats sync
             const clicks = data && typeof data.clicks === "number" ? data.clicks : 0;
             const stat1 = document.getElementById("bannerStatClicks");
             const stat2 = document.getElementById("adminBannerClickCount");
             if (stat1) stat1.textContent = clicks;
             if (stat2) stat2.textContent = clicks;
 
-            // Populate admin banner inputs if available
             if (data) {
                 const deskInput = document.getElementById("bannerDesktopUrl");
                 const mobInput = document.getElementById("bannerMobileUrl");
@@ -1246,7 +1347,6 @@
             }
         };
 
-        // Upload Desktop or Mobile Banner from Admin Gallery
         async function handleBannerFileUpload(fileInputId, urlInputId, previewId, statusId) {
             const file = document.getElementById(fileInputId)?.files?.[0];
             if (!file) return;
@@ -1319,7 +1419,6 @@
             const btn = document.getElementById("saveBannerBtn");
             btn.disabled = true;
             try {
-                // Saving a new banner resets clicks to 0 as requested
                 await setDoc(bannerDocRef, {
                     desktopImage,
                     mobileImage,
@@ -1368,7 +1467,6 @@
                 currentUser = cred.user;
                 setHomeLoaderProgress(Math.max(loaderPercent, 55), "Authenticated. Loading job posts...");
 
-                // Real-time listener for Banner Ad
                 onSnapshot(bannerDocRef, (docSnap) => {
                     if (docSnap.exists()) {
                         renderPromoBannerUI(docSnap.data());
@@ -1377,7 +1475,6 @@
                     }
                 });
 
-                // Real-time listener on Firestore jobs collection
                 onSnapshot(jobsCollectionRef, async (snapshot) => {
                     if (snapshot.empty && isInitialLoad) {
                         isInitialLoad = false;
@@ -1424,7 +1521,6 @@
             }[c]));
         }
 
-        // Safely format description text: escapes HTML first, renders **bold**, and applies Noto Nastaliq Urdu to Urdu lines
         function formatRichDescription(text) {
             const lines = String(text ?? "").split("\n");
             return lines.map(line => {
@@ -1441,7 +1537,6 @@
             return String(text ?? "").replace(/\*\*(.+?)\*\*/g, "$1");
         }
 
-        // Admin Description Bold Toolbar Button Handler
         window.toggleBoldDescriptionSelection = function() {
             const textarea = document.getElementById("jobDescriptionInput");
             if (!textarea) return;
@@ -1531,6 +1626,19 @@
             render();
         };
 
+        // Helper: Sort Featured Jobs First, then Latest First
+        function sortJobsWithFeaturedFirst(list) {
+            return [...list].sort((a, b) => {
+                const aFeat = a.featured ? 1 : 0;
+                const bFeat = b.featured ? 1 : 0;
+                if (bFeat !== aFeat) return bFeat - aFeat;
+                if (aFeat && bFeat) {
+                    return (b.featuredAt || b.created || 0) - (a.featuredAt || a.created || 0);
+                }
+                return (b.created || 0) - (a.created || 0);
+            });
+        }
+
         // Render Main Feed Cards
         window.render = function() {
             if (!isJobsLoaded) return;
@@ -1538,7 +1646,7 @@
             const q = document.getElementById("q").value.trim().toLowerCase();
             const citySelect = document.getElementById("city").value;
 
-            const list = jobs.filter(j => {
+            const filtered = jobs.filter(j => {
                 const matchesType = !activeType || j.type === activeType;
                 const matchesQuery = !q || [j.title, j.company, j.province, j.city, j.qualification, stripBoldMarkers(j.description)].join(" ").toLowerCase().includes(q);
 
@@ -1555,7 +1663,9 @@
                 }
 
                 return matchesType && matchesQuery && matchesLocation;
-            }).sort((a, b) => (b.created || 0) - (a.created || 0));
+            });
+
+            const list = sortJobsWithFeaturedFirst(filtered);
 
             document.getElementById("count").textContent = `${list.length} job ${list.length === 1 ? 'post' : 'posts'} found`;
             const feed = document.getElementById("feed");
@@ -1574,9 +1684,18 @@
 
             feed.innerHTML = list.map(j => {
                 const isGov = j.type === "Government";
+                const isFeatured = Boolean(j.featured);
+                const expiry = getJobExpiryStatus(j.deadline);
+
                 const badgeClass = isGov
                     ? "bg-emerald-50 text-emerald-700 border-emerald-200/80"
                     : "bg-blue-50 text-blue-700 border-blue-200/80";
+
+                const cardBorderClass = isFeatured
+                    ? "border-amber-400 ring-2 ring-amber-400/20 bg-gradient-to-br from-amber-50/35 via-white to-white"
+                    : expiry.status === "expired"
+                        ? "border-slate-200/80 opacity-90"
+                        : "border-slate-200/90 hover:border-blue-400";
 
                 const titleIsUrdu = containsUrdu(j.title);
                 const descPlain = stripBoldMarkers(j.description);
@@ -1604,12 +1723,14 @@
                 }
 
                 return `
-                    <article onclick="openJobPage('${esc(j.id)}')" class="group bg-white rounded-2xl border border-slate-200/90 hover:border-blue-400 shadow-xs hover:shadow-xl hover:shadow-slate-900/5 transition-all duration-200 overflow-hidden flex flex-col sm:flex-row cursor-pointer">
+                    <article onclick="openJobPage('${esc(j.id)}')" class="group bg-white rounded-2xl border ${cardBorderClass} shadow-xs hover:shadow-xl hover:shadow-slate-900/5 transition-all duration-200 overflow-hidden flex flex-col sm:flex-row cursor-pointer">
                         ${mediaHtml}
                         <div class="p-5 flex-1 flex flex-col justify-between min-w-0">
                             <div class="space-y-2">
-                                <div class="flex flex-wrap items-center gap-2 text-[11px] font-semibold">
+                                <div class="flex flex-wrap items-center gap-1.5 text-[11px] font-semibold">
+                                    ${isFeatured ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950 text-[10px] font-extrabold uppercase tracking-wide shadow-xs"><i class="fa-solid fa-star text-[9px]"></i> Featured</span>` : ""}
                                     <span class="px-2.5 py-0.5 rounded-full border ${badgeClass} uppercase tracking-wide">${esc(j.type)}</span>
+                                    ${expiry.badgeHtml}
                                     <span class="text-slate-500 truncate"><i class="fa-solid fa-location-dot text-slate-400 mr-1"></i>${esc(j.city ? j.city + ', ' : '')}${esc(j.province || "Pakistan")}</span>
                                 </div>
                                 <h3 class="font-display text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug ${titleIsUrdu ? 'urdu-text text-xl' : ''}">
@@ -1624,8 +1745,8 @@
                             </div>
 
                             <div class="pt-3.5 mt-3.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
-                                <span class="text-xs font-bold text-slate-700">
-                                    <i class="fa-regular fa-calendar text-blue-600 mr-1"></i>
+                                <span class="text-xs font-bold ${expiry.status === 'expired' ? 'text-rose-600' : expiry.status === 'expiring_soon' ? 'text-amber-700' : 'text-slate-700'}">
+                                    <i class="fa-regular fa-calendar ${expiry.status === 'expired' ? 'text-rose-600' : 'text-blue-600'} mr-1"></i>
                                     ${j.deadline ? esc(j.deadline) : "See Details"}
                                 </span>
                                 <div class="flex items-center gap-1.5">
@@ -1652,6 +1773,9 @@
             if (!j) return;
 
             const isGov = j.type === "Government";
+            const isFeatured = Boolean(j.featured);
+            const expiry = getJobExpiryStatus(j.deadline);
+
             const badgeClass = isGov
                 ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                 : "bg-blue-50 text-blue-700 border-blue-200";
@@ -1676,12 +1800,14 @@
             }
 
             document.getElementById("detailPageContent").innerHTML = `
-                <div class="bg-white rounded-3xl border border-slate-200/90 shadow-xs p-6 sm:p-10 space-y-8">
+                <div class="bg-white rounded-3xl border ${isFeatured ? 'border-amber-300' : 'border-slate-200/90'} shadow-xs p-6 sm:p-10 space-y-8">
                     <!-- Post Header -->
                     <div class="space-y-4 border-b border-slate-100 pb-6">
                         <div class="flex flex-wrap items-center justify-between gap-2.5">
-                            <div class="flex flex-wrap items-center gap-2.5">
+                            <div class="flex flex-wrap items-center gap-2">
+                                ${isFeatured ? `<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-amber-400 text-slate-950 text-xs font-extrabold uppercase tracking-wider"><i class="fa-solid fa-star"></i> Featured Job</span>` : ""}
                                 <span class="px-3.5 py-1 rounded-full text-xs font-bold border ${badgeClass} uppercase tracking-wider">${esc(j.type)} Job</span>
+                                ${expiry.badgeHtml}
                                 <span class="text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
                                     <i class="fa-regular fa-clock mr-1"></i>Posted ${new Date(j.created || Date.now()).toLocaleDateString('en-PK', { year: 'numeric', month: 'short', day: 'numeric' })}
                                 </span>
@@ -1718,9 +1844,12 @@
                             <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Salary / Pay Scale</span>
                             <strong class="text-sm font-bold text-slate-800 mt-1 block ${containsUrdu(j.salary) ? 'urdu-text' : ''}">${esc(j.salary || "As per Employer Policy")}</strong>
                         </div>
-                        <div class="bg-rose-50/70 p-4 rounded-2xl border border-rose-200/80 sm:col-span-2 lg:col-span-2">
-                            <span class="text-[11px] font-bold uppercase tracking-wider text-rose-500 block">Last Date to Apply</span>
-                            <strong class="text-base font-extrabold text-rose-700 mt-1 block">${esc(j.deadline || "Check Official Website")}</strong>
+                        <div class="bg-rose-50/70 p-4 rounded-2xl border border-rose-200/80 sm:col-span-2 lg:col-span-2 flex flex-wrap items-center justify-between gap-2">
+                            <div>
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-rose-500 block">Last Date to Apply</span>
+                                <strong class="text-base font-extrabold text-rose-700 mt-1 block">${esc(j.deadline || "Check Official Website")}</strong>
+                            </div>
+                            ${expiry.badgeHtml}
                         </div>
                     </div>
 
@@ -1737,7 +1866,7 @@
                     <div class="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 rounded-3xl p-6 sm:p-8 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl">
                         <div class="space-y-1.5 max-w-xl">
                             <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Official Application Portal</span>
-                            <h3 class="font-display text-xl sm:text-2xl font-extrabold">Ready to submit your application?</h3>
+                            <h3 class="font-display text-xl sm:text-2xl font-extrabold">${expiry.status === "expired" ? "Application deadline may have passed" : "Ready to submit your application?"}</h3>
                             <p class="text-xs sm:text-sm text-slate-300 break-all">${esc(j.apply)}</p>
                         </div>
                         <div class="w-full md:w-auto flex flex-col sm:flex-row gap-3 shrink-0">
@@ -1964,33 +2093,68 @@
             }
         };
 
-        function renderAdmin() {
-            const sortedJobs = [...jobs].sort((a, b) => (b.created || 0) - (a.created || 0));
-            document.getElementById("total").textContent = sortedJobs.length;
-            document.getElementById("govTotal").textContent = sortedJobs.filter(j => j.type === "Government").length;
-            document.getElementById("privTotal").textContent = sortedJobs.filter(j => j.type === "Private").length;
+        // Quick Toggle Feature / Unfeature directly from Admin Table
+        window.toggleJobFeatured = async function(id) {
+            if (!currentUser) {
+                toast("Connecting to Firebase... please try again.");
+                return;
+            }
+            const job = jobs.find(x => x.id === id);
+            if (!job) return;
 
-            document.getElementById("rows").innerHTML = sortedJobs.length ? sortedJobs.map(j => `
-                <tr class="hover:bg-slate-50/80 transition-colors">
+            const nextState = !Boolean(job.featured);
+            try {
+                await updateDoc(doc(jobsCollectionRef, id), {
+                    featured: nextState,
+                    featuredAt: nextState ? Date.now() : 0
+                });
+                toast(nextState ? "Job Featured! Ab yeh sab se upar show hogi." : "Job Unfeatured! Normal order mein aa gayi hai.");
+            } catch (err) {
+                console.error("Feature toggle failed:", err);
+                toast("Failed to update Featured status");
+            }
+        };
+
+        function renderAdmin() {
+            const sortedJobs = sortJobsWithFeaturedFirst(jobs);
+            document.getElementById("total").textContent = sortedJobs.length;
+            document.getElementById("featuredTotal").textContent = sortedJobs.filter(j => j.featured).length;
+            document.getElementById("govTotal").textContent = sortedJobs.filter(j => j.type === "Government").length;
+
+            document.getElementById("rows").innerHTML = sortedJobs.length ? sortedJobs.map(j => {
+                const isFeat = Boolean(j.featured);
+                const expiry = getJobExpiryStatus(j.deadline);
+
+                return `
+                <tr class="${isFeat ? 'bg-amber-50/40' : 'hover:bg-slate-50/80'} transition-colors">
                     <td class="py-4 px-5">
-                        <div class="font-bold text-slate-900 ${containsUrdu(j.title) ? 'urdu-inline' : ''}">${esc(j.title)}</div>
-                        <div class="text-xs text-slate-500">${esc(j.company)}</div>
+                        <div class="flex items-center gap-2">
+                            ${isFeat ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 text-[10px] font-extrabold uppercase shrink-0"><i class="fa-solid fa-star text-[9px]"></i> Featured</span>` : ""}
+                            <div class="font-bold text-slate-900 ${containsUrdu(j.title) ? 'urdu-inline' : ''}">${esc(j.title)}</div>
+                        </div>
+                        <div class="text-xs text-slate-500 mt-0.5">${esc(j.company)}</div>
                     </td>
                     <td class="py-4 px-5">
-                        <span class="px-2.5 py-1 rounded-full text-xs font-bold ${j.type === 'Government' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}">
-                            ${esc(j.type)}
-                        </span>
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold ${j.type === 'Government' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}">
+                                ${esc(j.type)}
+                            </span>
+                            ${expiry.badgeHtml}
+                        </div>
                     </td>
                     <td class="py-4 px-5 text-xs font-medium text-slate-600">
                         ${esc(j.province || "—")}${j.city ? " • " + esc(j.city) : ""}
                     </td>
                     <td class="py-4 px-5 text-right space-x-1.5 whitespace-nowrap">
+                        <button onclick="toggleJobFeatured('${esc(j.id)}')" title="${isFeat ? 'Remove from top featured list' : 'Pin this job at the top of website'}" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${isFeat ? 'bg-amber-400 hover:bg-amber-500 text-slate-950' : 'bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200'}">
+                            <i class="fa-solid fa-star mr-1"></i>${isFeat ? 'Unfeature' : 'Feature'}
+                        </button>
                         <button onclick="closeAdminDashboard(); openJobPage('${esc(j.id)}')" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors">View</button>
                         <button onclick="editJob('${esc(j.id)}')" class="px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs font-bold transition-colors">Edit</button>
                         <button onclick="deleteJob('${esc(j.id)}')" class="px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition-colors">Delete</button>
                     </td>
-                </tr>
-            `).join("") : `<tr><td colspan="4" class="py-8 text-center text-slate-400">No posts yet in cloud database. Add your first job.</td></tr>`;
+                </tr>`;
+            }).join("") : `<tr><td colspan="4" class="py-8 text-center text-slate-400">No posts yet in cloud database. Add your first job.</td></tr>`;
         }
 
         window.resetJobForm = function() {
@@ -1998,6 +2162,7 @@
             form.reset();
             form.querySelectorAll("input, textarea").forEach(el => el.classList.remove("urdu-text"));
             document.querySelector('[name="id"]').value = "";
+            document.getElementById("jobFeaturedCheckbox").checked = false;
             uploadedMediaUrl = "";
             uploadedMediaType = "image";
             document.getElementById("uploadStatusText").textContent = "Supports JPG, PNG, WebP, MP4, WebM. Automatically stored on Cloudinary.";
@@ -2025,11 +2190,12 @@
             if (!j) return;
             const form = document.getElementById("jobForm");
             Object.keys(j).forEach(k => {
-                if (form.elements[k]) {
+                if (form.elements[k] && k !== "featured") {
                     form.elements[k].value = j[k] || "";
                     applyAutoUrduDirection(form.elements[k]);
                 }
             });
+            document.getElementById("jobFeaturedCheckbox").checked = Boolean(j.featured);
             form.elements["imageUrl"].value = j.image || "";
             uploadedMediaUrl = j.image || "";
             uploadedMediaType = isVideoMedia(j) ? "video" : "image";
@@ -2098,6 +2264,7 @@
                 const detectedMediaType = /\.(mp4|webm|ogg|mov)(\?|$)/i.test(finalMediaUrl) || finalMediaUrl.includes("/video/upload/")
                     ? "video"
                     : uploadedMediaType;
+                const isFeatured = document.getElementById("jobFeaturedCheckbox").checked;
 
                 const post = {
                     id: jobId,
@@ -2113,6 +2280,8 @@
                     description: d.description || "",
                     image: finalMediaUrl,
                     mediaType: detectedMediaType,
+                    featured: isFeatured,
+                    featuredAt: isFeatured ? (old && old.featured ? (old.featuredAt || Date.now()) : Date.now()) : 0,
                     created: old ? old.created : Date.now(),
                     updatedAt: Date.now()
                 };
